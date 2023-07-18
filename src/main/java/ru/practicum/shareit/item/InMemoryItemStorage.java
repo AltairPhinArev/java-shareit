@@ -62,7 +62,7 @@ public class InMemoryItemStorage implements ItemStorage {
 
     @Override
     public ItemDto updateItem(ItemDto updatedItemDto, Long itemId, Long userId) {
-        if (!itemMap.containsKey(itemId) ) {
+        if (!itemMap.containsKey(itemId)) {
             throw new NotFoundException("Item with id=" + itemId + " doesn't exist");
         }
 

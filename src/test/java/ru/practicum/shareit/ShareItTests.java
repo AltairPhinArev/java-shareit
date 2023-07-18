@@ -149,6 +149,7 @@ class ShareItTests {
 
 		Assertions.assertEquals(itemDto, itemService.updateItem(itemDto, itemDto.getId(), userDto.getId()));
 	}
+
     @Test
     public void testItemDelete() {
         UserDto userDto = UserDto.builder()

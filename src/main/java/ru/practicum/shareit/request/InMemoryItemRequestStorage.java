@@ -44,6 +44,7 @@ public class InMemoryItemRequestStorage implements ItemRequestStorage {
         itemRequestDto.setId(itemRequestId++);
         return itemRequestDto;
     }
+
     @Override
     public ItemRequestDto updateItemRequest(ItemRequestDto itemRequestDto) {
         itemRequestDto.setId(itemRequestDto.getId());

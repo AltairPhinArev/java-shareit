@@ -26,7 +26,7 @@ public class InMemoryUserStorage implements UserStorage {
         validate(user);
         userMap.put(userId, user);
         user.setId(userId++);
-        log.info("User has been created with id= {}" , user.getId());
+        log.info("User has been created with id= {}", user.getId());
         return user;
     }
 
@@ -41,7 +41,7 @@ public class InMemoryUserStorage implements UserStorage {
             }
             validate(user);
             userMap.put(user.getId(), user);
-            log.info("User has been updated with id= {}" , user.getId());
+            log.info("User has been updated with id= {}", user.getId());
             return user;
         } else {
             throw new ValidationException("User with id=" + userId + " doesn't exist");
@@ -75,7 +75,7 @@ public class InMemoryUserStorage implements UserStorage {
         }
     }
 
-    private void validate (UserDto user) {
+    private void validate(UserDto user) {
         if (user.getEmail() != null && user.getEmail().contains("@") && !user.getName().isBlank()) {
             for (UserDto userDto : userMap.values()) {
                 if (userDto.getEmail().equals(user.getEmail()) && !Objects.equals(userDto.getId(), user.getId())) {
