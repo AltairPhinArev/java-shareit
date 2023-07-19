@@ -24,25 +24,29 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public UserDto createUser(UserDto user) {
         validate(user);
-        userMap.put(userId, user);
         user.setId(userId++);
+        userMap.put(user.getId(), user);
         log.info("User has been created with id= {}", user.getId());
         return user;
     }
 
     @Override
-    public UserDto updateUser(UserDto user, Long userId) {
+    public UserDto updateUser(UserDto updatedUser, Long userId) {
         if (userMap.containsKey(userId)) {
-            user.setId(userId);
-            if (user.getEmail() == null) {
-                user.setEmail(userMap.get(userId).getEmail());
-            } else if (user.getName() == null) {
-                user.setName(userMap.get(userId).getName());
+
+            UserDto currentUser = userMap.get(userId);
+            updatedUser.setId(currentUser.getId());
+
+            if (updatedUser.getEmail() == null) {
+                updatedUser.setEmail(currentUser.getEmail());
+            } else if (updatedUser.getName() == null) {
+                updatedUser.setName(currentUser.getName());
             }
-            validate(user);
-            userMap.put(user.getId(), user);
-            log.info("User has been updated with id= {}", user.getId());
-            return user;
+
+            validate(updatedUser);
+            userMap.put(updatedUser.getId(), updatedUser);
+            log.info("User has been updated with id= {}", updatedUser.getId());
+            return updatedUser;
         } else {
             throw new ValidationException("User with id=" + userId + " doesn't exist");
         }

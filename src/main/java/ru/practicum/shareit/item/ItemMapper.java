@@ -6,7 +6,7 @@ import ru.practicum.shareit.item.model.Item;
 
 public class ItemMapper {
 
-    public ItemDto toUserDto(Item item) {
+    public ItemDto toItemDto(Item item) {
         return new ItemDto(
                 item.getId(),
                 item.getName(),
@@ -17,14 +17,14 @@ public class ItemMapper {
         );
     }
 
-    public Item toUser(ItemDto itemDto) {
+    public Item toItem(ItemDto itemDto) {
         return new Item(
                 itemDto.getId(),
                 itemDto.getName(),
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
-                itemDto.getOwner() != null ? itemDto.getOwner() : null,
-                itemDto.getRequest() != null ? itemDto.getRequest() : null
+                itemDto.getOwner(),
+                itemDto.getRequest()
         );
     }
 }

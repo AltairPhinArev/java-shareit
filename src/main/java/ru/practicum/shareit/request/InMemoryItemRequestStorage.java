@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@Slf4j
 public class InMemoryItemRequestStorage implements ItemRequestStorage {
 
     Long itemRequestId = 1L;
@@ -38,18 +40,18 @@ public class InMemoryItemRequestStorage implements ItemRequestStorage {
 
     @Override
     public ItemRequestDto createItemRequest(ItemRequestDto itemRequestDto) {
-        itemRequestDto.setRequester(itemRequestDto.getRequester());
+        itemRequestDto.setId(itemRequestId++);
         itemRequestDto.setCreated(LocalDateTime.now());
         itemRequestMap.put(itemRequestDto.getId(), itemRequestDto);
-        itemRequestDto.setId(itemRequestId++);
+        log.info("itemRequest has been created {}", itemRequestDto.getId());
         return itemRequestDto;
     }
 
     @Override
     public ItemRequestDto updateItemRequest(ItemRequestDto itemRequestDto) {
-        itemRequestDto.setId(itemRequestDto.getId());
-        itemRequestDto.setRequester(itemRequestDto.getRequester());
-        itemRequestDto.setCreated(LocalDateTime.now());
+        if (!itemRequestMap.containsKey(itemRequestDto.getId())) {
+            throw new NotFoundException("item Request with id= " + itemRequestDto.getId() + "doesn't exist");
+        }
         itemRequestMap.put(itemRequestDto.getId(), itemRequestDto);
         return itemRequestDto;
     }

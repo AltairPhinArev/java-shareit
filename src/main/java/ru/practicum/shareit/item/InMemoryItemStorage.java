@@ -11,6 +11,7 @@ import ru.practicum.shareit.request.ItemRequestMapper;
 import ru.practicum.shareit.request.ItemRequestService;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,12 +52,17 @@ public class InMemoryItemStorage implements ItemStorage {
     @Override
     public ItemDto createItem(ItemDto itemDto, Long userId) {
 
-        if (userMapper.toUser(userService.getUserById(userId)) != null) {
-            itemDto.setOwner(userMapper.toUser(userService.getUserById(userId)));
+        User user = userMapper.toUser(userService.getUserById(userId));
+
+        if (user != null) {
+            itemDto.setOwner(user);
         }
+
         validate(itemDto);
-        itemMap.put(itemId, itemDto);
         itemDto.setId(itemId++);
+        itemMap.put(itemDto.getId(), itemDto);
+        log.info("itemRequest has been created {} by User with id= {}", itemDto.getId(), userId);
+
         return itemDto;
     }
 
@@ -65,35 +71,36 @@ public class InMemoryItemStorage implements ItemStorage {
         if (!itemMap.containsKey(itemId)) {
             throw new NotFoundException("Item with id=" + itemId + " doesn't exist");
         }
-
+        updatedItemDto.setId(itemId);
         if (!Objects.equals(itemMap.get(itemId).getOwner().getId(), userId)) {
             throw new NotFoundException("Item with id=" + itemId + " doesn't exist");
         }
         ItemDto currentItemDto = itemMap.get(itemId);
 
-        if (updatedItemDto.getName() != null) {
-            currentItemDto.setName(updatedItemDto.getName());
+        if (updatedItemDto.getName() == null) {
+            updatedItemDto.setName(currentItemDto.getName());
         }
-        if (updatedItemDto.getAvailable() != null) {
-            currentItemDto.setAvailable(updatedItemDto.getAvailable());
+        if (updatedItemDto.getAvailable() == null) {
+            updatedItemDto.setAvailable(currentItemDto.getAvailable());
         }
-        if (updatedItemDto.getDescription() != null) {
-            currentItemDto.setDescription(updatedItemDto.getDescription());
+        if (updatedItemDto.getDescription() == null) {
+            updatedItemDto.setDescription(currentItemDto.getDescription());
         }
-        if (updatedItemDto.getOwner() != null) {
-            currentItemDto.setOwner(userMapper.toUser(userService.getUserById(userId)));
+        if (updatedItemDto.getOwner() == null) {
+            updatedItemDto.setOwner(userMapper.toUser(userService.getUserById(userId)));
         }
 
-        validate(currentItemDto);
-        itemMap.put(currentItemDto.getId(), currentItemDto);
-
-        return currentItemDto;
+        validate(updatedItemDto);
+        itemMap.put(updatedItemDto.getId(), updatedItemDto);
+        log.info("item has been created {} by User with id= {}", updatedItemDto.getId(), userId);
+        return updatedItemDto;
     }
 
     @Override
     public void deleteItem(Long itemId) {
         if (itemMap.get(itemId) != null) {
             itemMap.remove(itemId);
+            log.info("item has been removed with id= {} ", itemId);
         } else {
             throw new NotFoundException(HttpStatus.NOT_FOUND.toString());
         }
@@ -111,7 +118,7 @@ public class InMemoryItemStorage implements ItemStorage {
     @Override
     public List<ItemDto> getItemByDescription(String description) {
         if (description == null || description.trim().isEmpty()) {
-            return Collections.emptyList(); // Return an empty list if the description is null or empty.
+            return Collections.emptyList();
         }
         return itemMap.values().stream()
                 .filter(itemDto -> (itemDto.getName().toLowerCase().contains(description.toLowerCase()) ||
