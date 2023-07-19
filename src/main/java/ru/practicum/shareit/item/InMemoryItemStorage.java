@@ -51,12 +51,12 @@ public class InMemoryItemStorage implements ItemStorage {
 
     @Override
     public ItemDto createItem(ItemDto itemDto, Long userId) {
-        itemDto.setId(itemId++);
         User user = userMapper.toUser(userService.getUserById(userId));
         if (user != null) {
             itemDto.setOwner(user);
         }
         validate(itemDto);
+        itemDto.setId(itemId++);
         itemMap.put(itemDto.getId(), itemDto);
         log.info("itemRequest has been created {} by User with id= {}", itemDto.getId(), userId);
 
