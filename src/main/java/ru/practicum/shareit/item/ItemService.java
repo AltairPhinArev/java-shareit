@@ -1,44 +1,32 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import ru.practicum.shareit.item.comment.dto.CommentDto;
+import ru.practicum.shareit.item.comment.dto.InputCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoFull;
 
 import java.util.Collection;
 import java.util.List;
 
-@Service
-public class ItemService {
+public interface ItemService {
 
-    ItemStorage itemStorage;
+    CommentDto createNewComment(InputCommentDto inputCommentDto, Long userId, Long itemId);
 
-    @Autowired
-    public ItemService(ItemStorage itemStorage) {
-        this.itemStorage = itemStorage;
-    }
+    Collection<ItemDtoFull> getAllItems(Long userId);
 
-    public Collection<ItemDto> getAllItems(Long userId) {
-        return itemStorage.getAllItems(userId);
-    }
+    ItemDto createItem(ItemDto itemDto, Long userId);
 
-   public ItemDto createItem(ItemDto itemDto, Long userId) {
-        return itemStorage.createItem(itemDto, userId);
-    }
+    ItemDto updateItem(ItemDto itemDto, Long itemId, Long userId);
 
-    public ItemDto updateItem(ItemDto itemDto, Long itemId, Long userId) {
-        return itemStorage.updateItem(itemDto, itemId, userId);
-    }
+    void deleteItem(Long itemId);
 
-    public void deleteItem(Long itemId) {
-        itemStorage.deleteItem(itemId);
-    }
+    ItemDtoFull getItemById(Long itemId, Long userId);
 
-    public ItemDto getItemById(Long itemId) {
-        return itemStorage.getItemById(itemId);
-    }
+    ItemDto getItem(Long itemId);
 
-    public List<ItemDto> getItemByDescription(String description) {
-        return itemStorage.getItemByDescription(description);
-    }
+    List<ItemDto> getItemByDescription(String description);
 
+    List<CommentDto> getCommentByUserId(Long userId);
+
+    boolean checkItem(Long itemId);
 }

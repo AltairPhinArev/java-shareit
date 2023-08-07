@@ -5,32 +5,18 @@ import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.Collection;
 
-@Service
-public class UserService {
+public interface UserService {
 
-    UserStorage userStorage;
 
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
+    UserDto createUser(UserDto user);
 
-    public Collection<UserDto> getAllUsers() {
-        return userStorage.getAll();
-    }
+    UserDto updateUser(UserDto user,  Long userId);
 
-    public UserDto createUser(UserDto user) {
-        return userStorage.createUser(user);
-    }
+    void deleteUserById(Long userId);
 
-    public UserDto updateUser(UserDto user, Long userId) {
-        return userStorage.updateUser(user, userId);
-    }
+    Collection<UserDto> getAll();
 
-    public UserDto getUserById(Long userId) {
-        return userStorage.getUserById(userId);
-    }
+    UserDto getUserById(Long userId);
 
-    public void deleteUser(Long userId) {
-        userStorage.deleteUserById(userId);
-    }
+    boolean checkUser(Long userId);
 }

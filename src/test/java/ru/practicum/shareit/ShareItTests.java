@@ -6,15 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import ru.practicum.shareit.booking.BookingMapper;
+import ru.practicum.shareit.booking.BookingService;
+import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemService;
-import ru.practicum.shareit.item.ItemStorage;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.request.ItemRequestMapper;
-import ru.practicum.shareit.request.ItemRequestService;
+
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.user.UserStorage;
+
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,25 +31,23 @@ class ShareItTests {
 
     ItemService itemService;
 
-    UserStorage userStorage;
+	ItemMapper itemMapper;
 
-    ItemStorage itemStorage;
+	BookingService bookingService;
 
-    ItemRequestService itemRequestService;
+	BookingMapper bookingMapper;
 
-    ItemRequestMapper itemRequestMapper;
 
     @Autowired
-    public ShareItTests(UserService userService, UserMapper userMapper, ItemService itemService,
-                        UserStorage userStorage, ItemStorage itemStorage, ItemRequestService itemRequestService,
-                        ItemRequestMapper itemRequestMapper) {
+    public ShareItTests(UserService userService, UserMapper userMapper, ItemService itemService, ItemMapper itemMapper,
+						BookingService bookingService, BookingMapper bookingMapper) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.itemService = itemService;
-        this.userStorage = userStorage;
-        this.itemStorage = itemStorage;
-        this.itemRequestService = itemRequestService;
-        this.itemRequestMapper = itemRequestMapper;
+		this.bookingService = bookingService;
+		this.bookingMapper = bookingMapper;
+		this.itemMapper = itemMapper;
+
     }
 
     @Test
@@ -59,7 +59,7 @@ class ShareItTests {
         UserDto userDto = UserDto.builder()
                 .id(1L)
                 .name("USER")
-                .email("email@.com")
+                .email("user11@example.com")
                 .build();
 
         Assertions.assertEquals(userDto, userService.createUser(userDto));
@@ -70,7 +70,7 @@ class ShareItTests {
 		UserDto userDto = UserDto.builder()
 				.id(1L)
 				.name("USER")
-				.email("emaily@.con")
+				.email("emaily@gmail.con")
 				.build();
 
 		userService.createUser(userDto);
@@ -83,7 +83,7 @@ class ShareItTests {
         UserDto userDto = UserDto.builder()
                 .id(1L)
                 .name("USER")
-                .email("emaqil@.com")
+                .email("user16example.com")
                 .build();
 
         userService.createUser(userDto);
@@ -95,35 +95,39 @@ class ShareItTests {
 		UserDto userDto = UserDto.builder()
 				.id(1L)
 				.name("USER")
-				.email("emaiil@.com")
+				.email("user17@example.com")
 				.build();
 
 		userService.createUser(userDto);
 		Assertions.assertEquals(userDto, userService.getUserById(userDto.getId()));
-		int size = userService.getAllUsers().size();
+		int size = userService.getAll().size();
 
-		userService.deleteUser(userDto.getId());
-		Assertions.assertEquals(size - 1, userService.getAllUsers().size());
+		userService.deleteUserById(userDto.getId());
+		Assertions.assertEquals(size - 1, userService.getAll().size());
 	}
 
 	@Test
     public void testItemCreate() {
-        UserDto userDto = UserDto.builder()
+        UserDto useDto = UserDto.builder()
                 .id(1L)
                 .name("USER")
-                .email("emaiil@.com")
+                .email("user18@example.com")
                 .build();
 
         ItemDto itemDto = ItemDto.builder()
                 .id(1L)
                 .name("Disc")
-                .owner(userMapper.toUser(userDto))
+                .owner(userMapper.toUser(useDto))
                 .available(true)
                 .description("Disc")
-                .request(null)
                 .build();
-        userService.createUser(userDto);
-        Assertions.assertEquals(itemDto, itemService.createItem(itemDto, userDto.getId()));
+        userService.createUser(useDto);
+
+		Assertions.assertEquals(useDto, userService.getUserById(useDto.getId()));
+		Assertions.assertEquals(itemDto.getId(), itemService.getItemById(itemDto.getId(), useDto.getId()).getId());
+		Assertions.assertEquals(itemDto.getDescription(), itemService.getItemById(itemDto.getId(), useDto.getId()).getDescription());
+		Assertions.assertEquals(itemDto.getAvailable(), itemService.getItemById(itemDto.getId(), useDto.getId()).getAvailable());
+		Assertions.assertEquals(itemDto.getOwner(), itemService.getItemById(itemDto.getId(), useDto.getId()).getOwner());
     }
 
 	@Test
@@ -131,7 +135,7 @@ class ShareItTests {
 		UserDto userDto = UserDto.builder()
 				.id(1L)
 				.name("USER")
-				.email("emaiil@.con")
+				.email("user19@example.com")
 				.build();
 
 		ItemDto itemDto = ItemDto.builder()
@@ -140,7 +144,6 @@ class ShareItTests {
 				.owner(userMapper.toUser(userDto))
 				.available(true)
 				.description("Disc")
-				.request(null)
 				.build();
 		userService.createUser(userDto);
 		itemService.createItem(itemDto, userDto.getId());
@@ -155,7 +158,7 @@ class ShareItTests {
         UserDto userDto = UserDto.builder()
                 .id(1L)
                 .name("USER")
-                .email("yamlr@.com")
+                .email("user20@example.com")
                 .build();
 
         ItemDto itemDto = ItemDto.builder()
@@ -164,14 +167,17 @@ class ShareItTests {
                 .owner(userMapper.toUser(userDto))
                 .available(true)
                 .description("Disc")
-                .request(null)
                 .build();
 
         userService.createUser(userDto);
         itemService.createItem(itemDto, userDto.getId());
 
         Assertions.assertEquals(userDto, userService.getUserById(userDto.getId()));
-        Assertions.assertEquals(itemDto, itemService.getItemById(itemDto.getId()));
+        Assertions.assertEquals(itemDto.getId(), itemService.getItemById(itemDto.getId(), userDto.getId()).getId());
+		Assertions.assertEquals(itemDto.getDescription(), itemService.getItemById(itemDto.getId(), userDto.getId()).getDescription());
+		Assertions.assertEquals(itemDto.getAvailable(), itemService.getItemById(itemDto.getId(), userDto.getId()).getAvailable());
+		Assertions.assertEquals(itemDto.getOwner(), itemService.getItemById(itemDto.getId(), userDto.getId()).getOwner());
+
 
         int size = itemService.getAllItems(userDto.getId()).size();
 
@@ -185,7 +191,7 @@ class ShareItTests {
 		UserDto userDto = UserDto.builder()
 				.id(1L)
 				.name("USER")
-				.email("yaml@.com")
+				.email("yaml@mail.com")
 				.build();
 
 		ItemDto itemDto = ItemDto.builder()
@@ -194,14 +200,16 @@ class ShareItTests {
 				.owner(userMapper.toUser(userDto))
 				.available(true)
 				.description("Disc")
-				.request(null)
 				.build();
 
 		userService.createUser(userDto);
 		itemService.createItem(itemDto, userDto.getId());
 
 		Assertions.assertEquals(userDto, userService.getUserById(userDto.getId()));
-		Assertions.assertEquals(itemDto, itemService.getItemById(itemDto.getId()));
+		Assertions.assertEquals(itemDto.getId(), itemService.getItemById(itemDto.getId(), userDto.getId()).getId());
+		Assertions.assertEquals(itemDto.getDescription(), itemService.getItemById(itemDto.getId(), userDto.getId()).getDescription());
+		Assertions.assertEquals(itemDto.getAvailable(), itemService.getItemById(itemDto.getId(), userDto.getId()).getAvailable());
+		Assertions.assertEquals(itemDto.getOwner(), itemService.getItemById(itemDto.getId(), userDto.getId()).getOwner());
 	}
 
 	@Test
@@ -209,7 +217,7 @@ class ShareItTests {
 		UserDto userDto = UserDto.builder()
 				.id(1L)
 				.name("USER")
-				.email("yaml@.com")
+				.email("valid@email.com")
 				.build();
 
 		ItemDto itemDto = ItemDto.builder()
@@ -218,16 +226,32 @@ class ShareItTests {
 				.owner(userMapper.toUser(userDto))
 				.available(true)
 				.description("Comp")
-				.request(null)
 				.build();
 
 		userService.createUser(userDto);
 		itemService.createItem(itemDto, userDto.getId());
 		List<ItemDto> itemDtos = new ArrayList<>();
 
-		itemDtos.add(itemService.getItemById(itemDto.getId()));
+		itemDtos.add(ItemMapper.toItemDtoFromFullItemDto(itemService.getItemById(itemDto.getId(), userDto.getId())));
 
 		Assertions.assertEquals(userDto, userService.getUserById(userDto.getId()));
 		Assertions.assertEquals(itemDtos, itemService.getItemByDescription(itemDto.getName()));
+	}
+
+	@Test
+	public void testUserMapper() {
+		UserDto userDto = UserDto.builder()
+				.id(1L)
+				.name("USER")
+				.email("yaml@.com")
+				.build();
+
+		User user = User.builder()
+				.id(1L)
+				.name("USER")
+				.email("yaml@.com")
+				.build();
+
+		Assertions.assertEquals(userMapper.toUser(userDto), user);
 	}
 }

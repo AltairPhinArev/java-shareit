@@ -20,7 +20,7 @@ public class UserController {
 
     @GetMapping
     public Collection<UserDto> getAll() {
-        return userService.getAllUsers();
+        return userService.getAll();
     }
 
     @GetMapping("/{userId}")
@@ -42,6 +42,6 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     public void delete(@PathVariable Long userId) {
-        userService.deleteUser(userId);
+        userService.deleteUserById(userId);
     }
 }
