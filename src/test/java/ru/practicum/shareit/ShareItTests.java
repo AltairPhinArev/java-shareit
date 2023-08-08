@@ -212,6 +212,7 @@ class ShareItTests {
 
 		Assertions.assertEquals(UserMapper.toUser(userDto), user);
 	}
+
 	@Test
 	public void testCreateBookingAndUpdate() {
 		UserDto userDto = UserDto.builder()
