@@ -2,9 +2,11 @@ package ru.practicum.shareit.booking;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingInputDTO;
+import ru.practicum.shareit.booking.dto.ShortBookingDto;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemService;
@@ -27,6 +29,7 @@ public class BookingServiceImpl implements BookingService {
     BookingMapper bookingMapper;
 
     @Autowired
+    @Lazy
     public BookingServiceImpl(ItemService itemService, UserService userService, BookingMapper bookingMapper,
                               BookingRepository bookingRepository) {
         this.itemService = itemService;
@@ -87,6 +90,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public BookingDto getBookingByItemIdAndUserId(Long itemId, Long userId) {
+        Optional<Booking> bookingOptional = bookingRepository.findFirstByItemIdAndBookerIdAndEndIsBeforeAndStatus(
+                itemId, userId, LocalDateTime.now(), Status.APPROVED);
+
+        if (bookingOptional.isPresent()) {
+            return bookingMapper.toBookingDto(bookingOptional.get());
+        } else {
+            return null;
+        }
+    }
+
+
+
+    @Override
     public List<BookingDto> getAllBookingsByUserId(String state, Long userId) {
         userService.checkUser(userId);
 
@@ -118,7 +135,7 @@ public class BookingServiceImpl implements BookingService {
         bookings.sort(Comparator.comparing(Booking::getStart).reversed());
 
         return bookings.stream()
-                .map(bookingMapper::toBookingDto)
+                .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
 
@@ -135,33 +152,33 @@ public class BookingServiceImpl implements BookingService {
         switch (status) {
             case "ALL":
                 bookingDtos = bookingRepository.findByItemOwnerId(userId).stream()
-                        .map(bookingMapper::toBookingDto)
+                        .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
                 break;
             case "CURRENT":
                 bookingDtos = bookingRepository.findByItemOwnerIdAndStartIsBeforeAndEndIsAfter(userId, LocalDateTime.now(),
                         LocalDateTime.now()).stream()
-                        .map(bookingMapper::toBookingDto)
+                        .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
                 break;
             case "PAST":
                 bookingDtos = bookingRepository.findByItemOwnerIdAndEndIsBefore(userId, LocalDateTime.now()).stream()
-                        .map(bookingMapper::toBookingDto)
+                        .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
                 break;
             case "FUTURE":
                 bookingDtos = bookingRepository.findByItemOwnerIdAndStartIsAfter(userId, LocalDateTime.now()).stream()
-                        .map(bookingMapper::toBookingDto)
+                        .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
                 break;
             case "WAITING":
                 bookingDtos = bookingRepository.findByItemOwnerIdAndStatus(userId, Status.WAITING).stream()
-                        .map(bookingMapper::toBookingDto)
+                        .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
                 break;
             case "REJECTED":
                 bookingDtos = bookingRepository.findByItemOwnerIdAndStatus(userId, Status.REJECTED).stream()
-                        .map(bookingMapper::toBookingDto)
+                        .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
                 break;
             default:
@@ -175,7 +192,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> getBookingByStatus(String state, Long userId) {
         userService.checkUser(userId);
         return bookingRepository.findByItemOwnerIdAndStatus(userId, Status.valueOf(state)).stream()
-                .map(bookingMapper::toBookingDto)
+                .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
 
@@ -184,7 +201,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto getBookingById(Long bookingId, Long userId) {
         userService.checkUser(userId);
 
-        BookingDto bookingDto = bookingMapper.toBookingDto(bookingRepository.findById(bookingId)
+        BookingDto bookingDto = BookingMapper.toBookingDto(bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Booking with ID=" + bookingId + " doesn't exist")));
 
         if (bookingDto.getBooker().getId().equals(userId) || bookingDto.getItem().getOwner().getId().equals(userId)) {
@@ -208,6 +225,28 @@ public class BookingServiceImpl implements BookingService {
                 bookingInputDTO.getStart().isBefore(LocalDateTime.now()) ||
                 !itemService.getItem(bookingInputDTO.getItemId()).getAvailable()) {
             throw new ValidationException("Date of start must be earlier than end");
+        }
+    }
+
+    @Override
+    public ShortBookingDto getLastBooking(Long itemId) {
+        Booking lastBooking = bookingRepository.findFirstByItemIdAndStartBeforeOrderByStartDesc(itemId,
+                LocalDateTime.now());
+        if (lastBooking.getStatus() != Status.REJECTED) {
+            return BookingMapper.toShortBookingDto(lastBooking);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public ShortBookingDto getNextBooking(Long itemId) {
+        Booking nextBooking = bookingRepository.findFirstByItemIdAndStartAfterOrderByStartAsc(itemId,
+                LocalDateTime.now());
+        if (nextBooking.getStatus() != Status.REJECTED) {
+            return BookingMapper.toShortBookingDto(nextBooking);
+        } else {
+            return null;
         }
     }
 }

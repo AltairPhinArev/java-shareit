@@ -2,11 +2,10 @@ package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingMapper;
-import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.booking.Status;
+import ru.practicum.shareit.booking.*;
+import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.ShortBookingDto;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
@@ -36,28 +35,30 @@ public class ItemServiceImpl implements ItemService {
     ItemRepository itemRepository;
     UserService userService;
     CommentRepository commentRepository;
-
+    BookingService bookingService;
     BookingRepository bookingRepository;
 
 
     @Autowired
+    @Lazy
     public ItemServiceImpl(ItemRepository itemRepository, UserService userService,
                            CommentRepository commentRepository,
-                           BookingRepository bookingRepository) {
+                           BookingRepository bookingRepository,
+                           BookingService bookingService) {
         this.itemRepository = itemRepository;
         this.userService = userService;
         this.commentRepository = commentRepository;
         this.bookingRepository = bookingRepository;
+        this.bookingService = bookingService;
     }
 
     @Override
     public CommentDto createNewComment(InputCommentDto inputCommentDto, Long userId, Long itemId) {
 
-        Booking booking = bookingRepository.findFirstByItemIdAndBookerIdAndEndIsBeforeAndStatus(itemId, userId,
-                LocalDateTime.now(), Status.APPROVED);
+        BookingDto booking = bookingService.getBookingByItemIdAndUserId(itemId, userId);
 
         if (booking == null) {
-            throw new ValidationException(":* (");
+           throw new ValidationException("You can't comment Item without booking");
         }
 
         if (bookingRepository.existsByItemId(itemId)) {
@@ -77,13 +78,6 @@ public class ItemServiceImpl implements ItemService {
         } else {
             throw new ValidationException(":* (");
         }
-    }
-
-    @Override
-    public List<CommentDto> getCommentByUserId(Long userId) {
-        return commentRepository.findByAuthorId(userId).stream()
-                .map(CommentMapper::toCommentDto)
-                .collect(Collectors.toList());
     }
 
     @Override
@@ -107,13 +101,13 @@ public class ItemServiceImpl implements ItemService {
             if (bookingRepository.existsByItemId(item.getId())) {
 
                 try {
-                    lastBooking = getLastBooking(item.getId());
+                    lastBooking = bookingService.getLastBooking(item.getId());
                 } catch (NullPointerException e) {
                     lastBooking = null;
                 }
 
                 try {
-                    nextBooking = getNextBooking(item.getId());
+                    nextBooking = bookingService.getNextBooking(item.getId());
                 } catch (NullPointerException e) {
                     nextBooking = null;
                 }
@@ -202,13 +196,13 @@ public class ItemServiceImpl implements ItemService {
             if (bookingRepository.existsByItemId(itemId)) {
 
                 try {
-                    lastBooking = getLastBooking(itemId);
+                    lastBooking = bookingService.getLastBooking(itemId);
                 } catch (NullPointerException e) {
                     lastBooking = null;
                 }
 
                 try {
-                    nextBooking = getNextBooking(itemId);
+                    nextBooking = bookingService.getNextBooking(itemId);
                 } catch (NullPointerException e) {
                     nextBooking = null;
                 }
@@ -269,27 +263,6 @@ public class ItemServiceImpl implements ItemService {
     private void validate(InputCommentDto inputCommentDto, ItemDto itemDto) {
         if (inputCommentDto.getText() == null || inputCommentDto.getText().isBlank()) {
             throw new ValidationException("Illegal factor for comment");
-        }
-    }
-
-
-    private ShortBookingDto getLastBooking(Long itemId) {
-        Booking lastBooking = bookingRepository.findFirstByItemIdAndStartBeforeOrderByStartDesc(itemId,
-                LocalDateTime.now());
-        if (lastBooking.getStatus() != Status.REJECTED) {
-            return BookingMapper.toShortBookingDto(lastBooking);
-        } else {
-            return null;
-        }
-    }
-
-    private ShortBookingDto getNextBooking(Long itemId) {
-        Booking nextBooking = bookingRepository.findFirstByItemIdAndStartAfterOrderByStartAsc(itemId,
-                LocalDateTime.now());
-        if (nextBooking.getStatus() != Status.REJECTED) {
-            return BookingMapper.toShortBookingDto(nextBooking);
-        } else {
-            return null;
         }
     }
 }

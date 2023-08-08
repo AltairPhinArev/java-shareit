@@ -26,7 +26,5 @@ public interface ItemService {
 
     List<ItemDto> getItemByDescription(String description);
 
-    List<CommentDto> getCommentByUserId(Long userId);
-
     boolean checkItem(Long itemId);
 }

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.comment.dto;
 
+import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.item.model.Item;
 
@@ -19,6 +20,7 @@ public class CommentDto {
 
     private LocalDateTime created;
 
+    @Builder
     public CommentDto(Long id, String text, Item item, String authorName, LocalDateTime created) {
         this.id = id;
         this.text = text;

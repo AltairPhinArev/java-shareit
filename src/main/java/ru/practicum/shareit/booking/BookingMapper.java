@@ -23,7 +23,7 @@ public class BookingMapper {
         this.itemService = itemService;
     }
 
-    public BookingDto toBookingDto(Booking booking) {
+    public static BookingDto toBookingDto(Booking booking) {
         return new BookingDto(
                 booking.getId(),
                 booking.getStart(),
@@ -53,14 +53,6 @@ public class BookingMapper {
                 ItemMapper.toItem(itemService.getItem(bookingInputDTO.getItemId())),
                 UserMapper.toUser(userService.getUserById(userId)),
                 Status.WAITING
-        );
-    }
-
-    public BookingInputDTO toBookingInputDTO(Booking booking) {
-        return new BookingInputDTO(
-                booking.getItem().getId(),
-                booking.getStart(),
-                booking.getEnd()
         );
     }
 
