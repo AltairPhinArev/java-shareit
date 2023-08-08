@@ -13,7 +13,7 @@ public class CommentDto {
     private Long id;
 
     private String text;
-    // содержимое комментария;
+
     private Item item;
 
     private String authorName;

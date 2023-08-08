@@ -10,6 +10,7 @@ import java.util.List;
 
 @Data
 public class ItemDtoFull {
+
     Long id;
 
     String name;

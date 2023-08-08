@@ -20,7 +20,6 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-
     @GetMapping(value = "/{bookingId}")
     public BookingDto getBookingById(@PathVariable Long bookingId, @RequestHeader("X-Sharer-User-Id") Long userId) {
         return bookingService.getBookingById(bookingId, userId);
@@ -39,7 +38,6 @@ public class BookingController {
         return bookingService.getBookingsByOwner(state, userId);
     }
 
-
     @ResponseBody
     @PostMapping
     public BookingDto createBooking(@RequestBody BookingInputDTO bookingInputDTO,
@@ -53,7 +51,6 @@ public class BookingController {
                                     @RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam Boolean approved) {
         return bookingService.updateBooking(bookingId, userId, approved);
     }
-
 
     @DeleteMapping
     public void deleteBookingById(@PathVariable Long bookingId) {

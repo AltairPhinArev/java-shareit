@@ -41,7 +41,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto createBooking(BookingInputDTO bookingInputDTO, Long userId) {
         validate(bookingInputDTO, userId);
-        return bookingMapper.toBookingDto(
+        return BookingMapper.toBookingDto(
                 bookingRepository.save(bookingMapper.toBookingFromGson(bookingInputDTO, userId)));
     }
 
@@ -86,19 +86,14 @@ public class BookingServiceImpl implements BookingService {
             }
         }
 
-        return bookingMapper.toBookingDto(bookingRepository.save(booking));
+        return BookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
     @Override
     public BookingDto getBookingByItemIdAndUserId(Long itemId, Long userId) {
         Optional<Booking> bookingOptional = bookingRepository.findFirstByItemIdAndBookerIdAndEndIsBeforeAndStatus(
                 itemId, userId, LocalDateTime.now(), Status.APPROVED);
-
-        if (bookingOptional.isPresent()) {
-            return bookingMapper.toBookingDto(bookingOptional.get());
-        } else {
-            return null;
-        }
+        return bookingOptional.map(BookingMapper::toBookingDto).orElse(null);
     }
 
 
@@ -139,7 +134,6 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public void deleteBooking(Long bookingId) {
         bookingRepository.deleteById(bookingId);
@@ -148,7 +142,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> getBookingsByOwner(String status, Long userId) {
         userService.checkUser(userId);
-        List<BookingDto> bookingDtos = new ArrayList<>();
+        List<BookingDto> bookingDtos;
         switch (status) {
             case "ALL":
                 bookingDtos = bookingRepository.findByItemOwnerId(userId).stream()
@@ -196,7 +190,6 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public BookingDto getBookingById(Long bookingId, Long userId) {
         userService.checkUser(userId);
@@ -216,7 +209,7 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException("Cannot find user with id= " + userId);
         }
         if (Objects.equals(itemService.getItem(bookingInputDTO.getItemId()).getOwner().getId(), userId)) {
-            throw new NotFoundException(":* (");
+            throw new NotFoundException("You cannot book your own item.");
         }
 
         if (bookingInputDTO.getStart() == null || bookingInputDTO.getEnd() == null ||

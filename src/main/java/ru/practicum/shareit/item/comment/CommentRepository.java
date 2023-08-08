@@ -7,8 +7,6 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    List<Comment> findByAuthorId(Long authorId);
-
     Boolean existsByItemId(Long itemId);
 
     List<Comment> findByItemId(Long itemId);
