@@ -64,8 +64,8 @@ public class BookingServiceImpl implements BookingService {
                 throw new NotFoundException("Only the owner of the item can confirm the booking");
             }
 
-        } else if ((Objects.equals(itemService.getItem(booking.getItem().
-                getId()).getOwner().getId(), userId)) &&
+        } else if ((Objects.equals(itemService.getItem(booking.getItem()
+                .getId()).getOwner().getId(), userId)) &&
                 (!booking.getStatus().equals(Status.CANCELED))) {
             if (!booking.getStatus().equals(Status.WAITING)) {
                 throw new ValidationException("The booking decision has already been made");
