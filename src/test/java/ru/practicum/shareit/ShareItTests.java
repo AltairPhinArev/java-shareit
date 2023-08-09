@@ -244,17 +244,16 @@ class ShareItTests {
 				.end(LocalDateTime.of(2024, 11, 11, 12, 51))
 				.build();
 
+		BookingDto bookingDto = bookingService.createBooking(bookingInputDTO, userDto1.getId());
 
 		BookingDto bookingDto1 = BookingDto.builder()
-				.id(1L)
+				.id(bookingDto.getId())
 				.start(LocalDateTime.of(2023, 11, 10, 11, 11))
 				.end(LocalDateTime.of(2024, 11, 11, 12, 51))
 				.item(ItemMapper.toItem(itemDto))
 				.booker(UserMapper.toUser(userDto1))
 				.status(Status.WAITING)
 				.build();
-
-		BookingDto bookingDto = bookingService.createBooking(bookingInputDTO, userDto1.getId());
 
 		Assertions.assertEquals(bookingDto1, bookingDto);
 
