@@ -22,10 +22,7 @@ import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -76,7 +73,7 @@ public class ItemServiceImpl implements ItemService {
                     LocalDateTime.now())
             ));
         } else {
-            throw new ValidationException(":* (");
+            throw new ValidationException("Booking of Item with ID= " + itemId + " doesn't exist");
         }
     }
 
@@ -98,35 +95,17 @@ public class ItemServiceImpl implements ItemService {
                         .collect(Collectors.toList()));
             }
 
-            if (bookingRepository.existsByItemId(item.getId())) {
-
-                try {
+            if (Objects.equals(userId, item.getOwner().getId())) {
                     lastBooking = bookingService.getLastBooking(item.getId());
-                } catch (NullPointerException e) {
-                    lastBooking = null;
-                }
-
-                try {
                     nextBooking = bookingService.getNextBooking(item.getId());
-                } catch (NullPointerException e) {
-                    nextBooking = null;
-                }
             }
 
-
-            itemDtoFulls.add(new ItemDtoFull(
-                    item.getId(),
-                    item.getName(),
-                    item.getDescription(),
-                    item.getAvailable(),
-                    item.getOwner(),
-                    lastBooking,
-                    nextBooking,
-                    comments
-            ));
+            itemDtoFulls.add(ItemMapper.ItemDtoFull(item, lastBooking, nextBooking, comments));
         }
 
-        return itemDtoFulls;
+        return itemDtoFulls.stream()
+                .sorted(Comparator.comparing(ItemDtoFull::getId))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -192,22 +171,8 @@ public class ItemServiceImpl implements ItemService {
         List<CommentDto> comments = new ArrayList<>();
 
         if (userId.equals(item.getOwner().getId())) {
-
-            if (bookingRepository.existsByItemId(itemId)) {
-
-                try {
-                    lastBooking = bookingService.getLastBooking(itemId);
-                } catch (NullPointerException e) {
-                    lastBooking = null;
-                }
-
-                try {
-                    nextBooking = bookingService.getNextBooking(itemId);
-                } catch (NullPointerException e) {
-                    nextBooking = null;
-                }
-
-            }
+            lastBooking = bookingService.getLastBooking(itemId);
+            nextBooking = bookingService.getNextBooking(itemId);
         }
 
         if (commentRepository.existsByItemId(itemId)) {
@@ -216,17 +181,7 @@ public class ItemServiceImpl implements ItemService {
                     .collect(Collectors.toList()));
         }
 
-
-        return new ItemDtoFull(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                item.getOwner(),
-                lastBooking,
-                nextBooking,
-                comments
-        );
+        return ItemMapper.ItemDtoFull(item, lastBooking, nextBooking, comments);
     }
 
 

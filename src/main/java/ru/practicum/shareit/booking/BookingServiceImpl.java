@@ -9,7 +9,9 @@ import ru.practicum.shareit.booking.dto.BookingInputDTO;
 import ru.practicum.shareit.booking.dto.ShortBookingDto;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemService;
+import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserService;
 
 import java.time.LocalDateTime;
@@ -42,7 +44,9 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto createBooking(BookingInputDTO bookingInputDTO, Long userId) {
         validate(bookingInputDTO, userId);
         return BookingMapper.toBookingDto(
-                bookingRepository.save(bookingMapper.toBookingFromGson(bookingInputDTO, userId)));
+                bookingRepository.save(BookingMapper.toBookingFromGson(bookingInputDTO,
+                        ItemMapper.toItem(itemService.getItem(bookingInputDTO.getItemId())),
+                        UserMapper.toUser(userService.getUserById(userId)))));
     }
 
     @Override
@@ -64,15 +68,17 @@ public class BookingServiceImpl implements BookingService {
                 throw new NotFoundException("Only the owner of the item can confirm the booking");
             }
 
-        } else if ((Objects.equals(itemService.getItem(booking.getItem()
-                .getId()).getOwner().getId(), userId)) &&
+        } else if ((Objects.equals(itemService.getItem(booking.getItem().getId()).getOwner().getId(), userId)) &&
                 (!booking.getStatus().equals(Status.CANCELED))) {
+
             if (!booking.getStatus().equals(Status.WAITING)) {
                 throw new ValidationException("The booking decision has already been made");
             }
+
             if (approved) {
                 booking.setStatus(Status.APPROVED);
                 log.info("User with ID={} APPROVED booking with ID={}", userId, bookingId);
+
             } else {
                 booking.setStatus(Status.REJECTED);
                 log.info("User with ID={} REJECTED booking with ID={}", userId, bookingId);
@@ -95,7 +101,6 @@ public class BookingServiceImpl implements BookingService {
                 itemId, userId, LocalDateTime.now(), Status.APPROVED);
         return bookingOptional.map(BookingMapper::toBookingDto).orElse(null);
     }
-
 
 
     @Override
@@ -151,7 +156,7 @@ public class BookingServiceImpl implements BookingService {
                 break;
             case "CURRENT":
                 bookingDtos = bookingRepository.findByItemOwnerIdAndStartIsBeforeAndEndIsAfter(userId, LocalDateTime.now(),
-                        LocalDateTime.now()).stream()
+                                LocalDateTime.now()).stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
                 break;
@@ -224,22 +229,24 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public ShortBookingDto getLastBooking(Long itemId) {
         Booking lastBooking = bookingRepository.findFirstByItemIdAndStartBeforeOrderByStartDesc(itemId,
-                LocalDateTime.now());
-        if (lastBooking.getStatus() != Status.REJECTED) {
-            return BookingMapper.toShortBookingDto(lastBooking);
-        } else {
-            return null;
+                LocalDateTime.now()).orElse(null);
+        if (lastBooking != null) {
+            if (lastBooking.getStatus() != Status.REJECTED) {
+                return BookingMapper.toShortBookingDto(lastBooking);
+            }
         }
+        return null;
     }
 
     @Override
     public ShortBookingDto getNextBooking(Long itemId) {
         Booking nextBooking = bookingRepository.findFirstByItemIdAndStartAfterOrderByStartAsc(itemId,
-                LocalDateTime.now());
-        if (nextBooking.getStatus() != Status.REJECTED) {
-            return BookingMapper.toShortBookingDto(nextBooking);
-        } else {
-            return null;
+                LocalDateTime.now()).orElse(null);
+        if (nextBooking != null) {
+            if (nextBooking.getStatus() != Status.REJECTED) {
+                return BookingMapper.toShortBookingDto(nextBooking);
+            }
         }
+        return null;
     }
 }

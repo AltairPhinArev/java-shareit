@@ -7,8 +7,10 @@ import ru.practicum.shareit.booking.dto.BookingInputDTO;
 import ru.practicum.shareit.booking.dto.ShortBookingDto;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemService;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.model.User;
 
 @Component
 public class BookingMapper {
@@ -45,13 +47,13 @@ public class BookingMapper {
         );
     }
 
-    public Booking toBookingFromGson(BookingInputDTO bookingInputDTO, Long userId) {
+    public static Booking toBookingFromGson(BookingInputDTO bookingInputDTO, Item item, User booker) {
         return new Booking(
                 null,
                 bookingInputDTO.getStart(),
                 bookingInputDTO.getEnd(),
-                ItemMapper.toItem(itemService.getItem(bookingInputDTO.getItemId())),
-                UserMapper.toUser(userService.getUserById(userId)),
+                item,
+                booker,
                 Status.WAITING
         );
     }
