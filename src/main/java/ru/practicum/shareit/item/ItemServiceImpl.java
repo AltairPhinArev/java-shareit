@@ -100,7 +100,7 @@ public class ItemServiceImpl implements ItemService {
                     nextBooking = bookingService.getNextBooking(item.getId());
             }
 
-            itemDtoFulls.add(ItemMapper.ItemDtoFull(item, lastBooking, nextBooking, comments));
+            itemDtoFulls.add(ItemMapper.toItemDtoFull(item, lastBooking, nextBooking, comments));
         }
 
         return itemDtoFulls.stream()
@@ -181,7 +181,7 @@ public class ItemServiceImpl implements ItemService {
                     .collect(Collectors.toList()));
         }
 
-        return ItemMapper.ItemDtoFull(item, lastBooking, nextBooking, comments);
+        return ItemMapper.toItemDtoFull(item, lastBooking, nextBooking, comments);
     }
 
 

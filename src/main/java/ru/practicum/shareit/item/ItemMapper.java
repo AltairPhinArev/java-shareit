@@ -64,7 +64,7 @@ public class ItemMapper {
         );
     }
 
-    public static ItemDtoFull ItemDtoFull(Item item, ShortBookingDto lastBooking, ShortBookingDto nextBooking,
+    public static ItemDtoFull toItemDtoFull(Item item, ShortBookingDto lastBooking, ShortBookingDto nextBooking,
                                           List<CommentDto> comments) {
         return new ItemDtoFull(
                 item.getId(),
