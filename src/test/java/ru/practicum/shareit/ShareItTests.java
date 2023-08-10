@@ -14,11 +14,9 @@ import ru.practicum.shareit.booking.dto.BookingInputDTO;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.ItemDto;
-
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserService;
-
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -60,7 +58,7 @@ class ShareItTests {
 
     @Test
     public void testUserCreate() {
-        UserDto userDto = UserDto.builder()
+		UserDto userDto = UserDto.builder()
                 .id(1L)
                 .name("USER")
                 .email("user11@example.com")

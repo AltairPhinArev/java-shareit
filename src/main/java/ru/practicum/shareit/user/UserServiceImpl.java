@@ -10,6 +10,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -40,19 +41,19 @@ public class UserServiceImpl implements UserService {
         if (userDto.getName() != null) {
             user.setName(userDto.getName());
         }
-        if ((userDto.getEmail() != null) && (userDto.getEmail() != user.getEmail())) {
-            if (userRepository.findByEmail(userDto.getEmail())
-                    .stream()
-                    .filter(u -> u.getEmail().equals(userDto.getEmail()))
-                    .allMatch(u -> u.getId().equals(userDto.getId()))) {
+        if (!Objects.equals(userDto.getEmail(), null) && (!userDto.getEmail().equals(user.getEmail()))) {
+            List<User> usersWithEmail = userRepository.findByEmail(userDto.getEmail());
+
+            boolean allMatch = usersWithEmail.stream()
+                    .allMatch(u -> u.getId().equals(userDto.getId()));
+
+            if (allMatch) {
                 user.setEmail(userDto.getEmail());
             } else {
-                throw new RegisterException("User with E-mail=" + userDto.getEmail() + " exist");
+                throw new RegisterException("User with E-mail=" + userDto.getEmail() + " exists");
             }
 
         }
-
-        UserDto updateUserDto = UserMapper.toUserDto(user);
 
         return UserMapper.toUserDto(userRepository.save(user));
     }
@@ -72,7 +73,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(Long userId) {
         return UserMapper.toUserDto(userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("\"User with ID= " + userId + "  doesn't exist")));
+                .orElseThrow(() -> new NotFoundException("User with ID= " + userId + "  doesn't exist")));
     }
 
     @Override

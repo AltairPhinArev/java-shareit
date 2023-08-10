@@ -15,6 +15,7 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     Long id;
 
     @Column(name = "start_time")
@@ -32,6 +33,7 @@ public class Booking {
     User booker;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     Status status;
 
     public Booking() {

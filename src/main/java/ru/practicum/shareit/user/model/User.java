@@ -10,11 +10,14 @@ import javax.validation.constraints.Email;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     Long id;
 
+    @Column(name = "name")
     String name;
 
     @Email
+    @Column(name = "email")
     String email;
 
     public User() {

@@ -55,7 +55,7 @@ public class ItemServiceImpl implements ItemService {
         BookingDto booking = bookingService.getBookingByItemIdAndUserId(itemId, userId);
 
         if (booking == null) {
-           throw new ValidationException("You can't comment Item without booking");
+            throw new ValidationException("You can't comment Item without booking");
         }
 
         if (bookingRepository.existsByItemId(itemId)) {
@@ -96,8 +96,8 @@ public class ItemServiceImpl implements ItemService {
             }
 
             if (Objects.equals(userId, item.getOwner().getId())) {
-                    lastBooking = bookingService.getLastBooking(item.getId());
-                    nextBooking = bookingService.getNextBooking(item.getId());
+                lastBooking = bookingService.getLastBooking(item.getId());
+                nextBooking = bookingService.getNextBooking(item.getId());
             }
 
             itemDtoFulls.add(ItemMapper.toItemDtoFull(item, lastBooking, nextBooking, comments));
@@ -110,15 +110,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto createItem(ItemDto itemDto, Long userId) {
-        try {
-            validate(itemDto, userId);
-            User owner = UserMapper.toUser(userService.getUserById(userId));
-            itemDto.setOwner(owner);
-
-            return ItemMapper.toItemDto(itemRepository.save(ItemMapper.toItem(itemDto)));
-        } catch (ValidationException e) {
-            throw e;
-        }
+        validate(itemDto, userId);
+        User owner = UserMapper.toUser(userService.getUserById(userId));
+        itemDto.setOwner(owner);
+        return ItemMapper.toItemDto(itemRepository.save(ItemMapper.toItem(itemDto)));
     }
 
     @Override

@@ -12,12 +12,16 @@ public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     Long id;
 
+    @Column(name = "name")
     String name;
 
+    @Column(name = "description")
     String description;
 
+    @Column(name = "available")
     Boolean available;
 
     @ManyToOne

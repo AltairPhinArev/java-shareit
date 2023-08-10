@@ -15,14 +15,6 @@ import java.util.List;
 @Component
 public class ItemMapper {
 
-    BookingService bookingService;
-
-
-    @Autowired
-    public ItemMapper(BookingService bookingService) {
-        this.bookingService = bookingService;
-    }
-
     public static ItemDto toItemDto(Item item) {
         return new ItemDto(
                 item.getId(),
