@@ -5,9 +5,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.Collection;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
@@ -20,7 +17,7 @@ public class UserController {
 
     @GetMapping
     public Collection<UserDto> getAll() {
-        return userService.getAllUsers();
+        return userService.getAll();
     }
 
     @GetMapping("/{userId}")
@@ -42,6 +39,6 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     public void delete(@PathVariable Long userId) {
-        userService.deleteUser(userId);
+        userService.deleteUserById(userId);
     }
 }
