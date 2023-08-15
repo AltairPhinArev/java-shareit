@@ -18,7 +18,8 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
-                item.getOwner() != null ? item.getOwner() : null
+                item.getOwner() != null ? item.getOwner() : null,
+                item.getRequestId() != null ? item.getRequestId() : null
         );
     }
 
@@ -28,7 +29,8 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
-                item.getOwner() != null ? item.getOwner() : null
+                item.getOwner() != null ? item.getOwner() : null,
+                item.getRequestId() != null ? item.getRequestId() : null
         );
     }
 
@@ -38,7 +40,9 @@ public class ItemMapper {
                 itemDto.getName(),
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
-                itemDto.getOwner()
+                itemDto.getOwner(),
+                itemDto.getRequestId() != null ? itemDto.getRequestId() : null
+
         );
     }
 
@@ -48,7 +52,8 @@ public class ItemMapper {
                 itemDtoFull.getName(),
                 itemDtoFull.getDescription(),
                 itemDtoFull.getAvailable(),
-                itemDtoFull.getOwner()
+                itemDtoFull.getOwner(),
+                itemDtoFull.getRequestId() != null ? itemDtoFull.getRequestId() : null
         );
     }
 
@@ -60,6 +65,7 @@ public class ItemMapper {
                 item.getDescription(),
                 item.getAvailable(),
                 item.getOwner() != null ? item.getOwner() : null,
+                item.getRequestId() != null ? item.getRequestId() : null,
                 lastBooking,
                 nextBooking,
                 comments

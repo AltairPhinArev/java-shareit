@@ -3,6 +3,10 @@ package ru.practicum.shareit.item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -17,6 +21,7 @@ import ru.practicum.shareit.item.comment.model.Comment;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoFull;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequestService;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.model.User;
@@ -35,18 +40,20 @@ public class ItemServiceImpl implements ItemService {
     BookingService bookingService;
     BookingRepository bookingRepository;
 
+    ItemRequestService itemRequestService;
 
     @Autowired
     @Lazy
-    public ItemServiceImpl(ItemRepository itemRepository, UserService userService,
-                           CommentRepository commentRepository,
-                           BookingRepository bookingRepository,
-                           BookingService bookingService) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserService userService, CommentRepository commentRepository,
+                           BookingRepository bookingRepository, BookingService bookingService,
+                           ItemRequestService itemRequestService) {
+
         this.itemRepository = itemRepository;
         this.userService = userService;
         this.commentRepository = commentRepository;
         this.bookingRepository = bookingRepository;
         this.bookingService = bookingService;
+        this.itemRequestService = itemRequestService;
     }
 
     @Override
@@ -78,8 +85,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemDtoFull> getAllItems(Long userId) {
-        List<Item> items = itemRepository.findByOwnerId(userId);
+    public Collection<ItemDtoFull> getAllItemsByUserId(Long userId, Integer from ,Integer size) {
+        if (from < 0 || size <= 0) {
+            throw new ValidationException("Illegal params");
+        }
+
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+
+        List<Item> items = itemRepository.findByOwnerId(userId, page).toList();
 
         List<ItemDtoFull> itemDtoFulls = new ArrayList<>();
 
@@ -181,15 +194,28 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    public List<ItemDto> getItemByDescription(String description) {
+    public List<ItemDto> getItemByDescription(String description, Integer from, Integer size) {
+        if (from < 0 || size <= 0) {
+            throw new ValidationException("Illegal params");
+        }
+
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+
         if (description == null || description.isBlank()) {
             return Collections.emptyList();
         } else {
-            return itemRepository.search(description).stream()
+            return itemRepository.search(description, page).stream()
                     .filter(Item::getAvailable)
                     .map(ItemMapper::toItemDto)
                     .collect(Collectors.toList());
         }
+    }
+
+    @Override
+    public List<ItemDto> getItemByRequestId(Long requestId) {
+        return itemRepository.findByRequestId(requestId).stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 
     @Override

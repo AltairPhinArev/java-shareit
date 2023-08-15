@@ -5,34 +5,18 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
-public class ItemRequestService {
+public interface ItemRequestService {
 
-    ItemRequestStorage itemRequestStorage;
+    Collection<ItemRequestDto> getAllItemRequest(Long userId, Integer from, Integer size);
 
-    @Autowired
-    public ItemRequestService(ItemRequestStorage itemRequestStorage) {
-        this.itemRequestStorage = itemRequestStorage;
-    }
+    ItemRequestDto createItemRequest(ItemRequestDto itemRequestDto, Long userId);
 
-    public Collection<ItemRequestDto> getAllItemRequest() {
-        return  itemRequestStorage.getAllItemRequest();
-    }
+    ItemRequestDto getItemRequestById(Long itemRequestId, Long userId);
 
-    public ItemRequestDto createItemRequest(ItemRequestDto itemRequestDto) {
-        return itemRequestStorage.createItemRequest(itemRequestDto);
-    }
+    List<ItemRequestDto> getOwnItemRequests(Long userId, Integer from, Integer size);
 
-    public ItemRequestDto updateItemRequest(ItemRequestDto itemRequestDto) {
-        return itemRequestStorage.updateItemRequest(itemRequestDto);
-    }
-
-    public ItemRequestDto getItemRequestById(Long itemRequestId) {
-        return itemRequestStorage.getItemRequestById(itemRequestId);
-    }
-
-    public void deleteItemRequestById(Long itemRequestId) {
-        itemRequestStorage.deleteItemRequestById(itemRequestId);
-    }
+    void deleteItemRequestById(Long itemRequestId);
 }

@@ -3,6 +3,8 @@ package ru.practicum.shareit.booking;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingInputDTO;
@@ -104,29 +106,35 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
-    public List<BookingDto> getAllBookingsByUserId(String state, Long userId) {
+    public List<BookingDto> getAllBookingsByUserId(String state, Long userId, Integer from, Integer size) {
         userService.checkUser(userId);
+        if (from < 0 || size <= 0) {
+            throw new ValidationException("Illegal params");
+        }
+
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("start").descending());
 
         List<Booking> bookings;
+
         switch (state) {
             case "ALL":
-                bookings = bookingRepository.findByBookerId(userId);
+                bookings = bookingRepository.findByBookerId(userId, page);
                 break;
             case "CURRENT":
                 bookings = bookingRepository.findByBookerIdAndStartIsBeforeAndEndIsAfter(userId, LocalDateTime.now(),
-                        LocalDateTime.now());
+                        LocalDateTime.now(), page);
                 break;
             case "PAST":
-                bookings = bookingRepository.findByBookerIdAndEndIsBefore(userId, LocalDateTime.now());
+                bookings = bookingRepository.findByBookerIdAndEndIsBefore(userId, LocalDateTime.now(), page);
                 break;
             case "FUTURE":
-                bookings = bookingRepository.findByBookerIdAndStartIsAfter(userId, LocalDateTime.now());
+                bookings = bookingRepository.findByBookerIdAndStartIsAfter(userId, LocalDateTime.now(), page);
                 break;
             case "WAITING":
-                bookings = bookingRepository.findByBookerIdAndStatus(userId, Status.WAITING);
+                bookings = bookingRepository.findByBookerIdAndStatus(userId, Status.WAITING, page);
                 break;
             case "REJECTED":
-                bookings = bookingRepository.findByBookerIdAndStatus(userId, Status.REJECTED);
+                bookings = bookingRepository.findByBookerIdAndStatus(userId, Status.REJECTED, page);
                 break;
             default:
                 throw new ValidationException("Unknown state: " + state);
@@ -145,52 +153,67 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingsByOwner(String status, Long userId) {
+    public List<BookingDto> getBookingsByOwner(String status, Long userId, Integer from, Integer size) {
         userService.checkUser(userId);
+        if (from < 0 || size <= 0) {
+            throw new ValidationException("Illegal params");
+        }
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+
         List<BookingDto> bookingDtos;
         switch (status) {
             case "ALL":
-                bookingDtos = bookingRepository.findByItemOwnerId(userId).stream()
+                bookingDtos = bookingRepository.findByItemOwnerIdOrderByIdDesc(userId, page).stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
                 break;
             case "CURRENT":
                 bookingDtos = bookingRepository.findByItemOwnerIdAndStartIsBeforeAndEndIsAfter(userId, LocalDateTime.now(),
-                                LocalDateTime.now()).stream()
+                                LocalDateTime.now(), page).stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
+                Collections.reverse(bookingDtos);
                 break;
             case "PAST":
-                bookingDtos = bookingRepository.findByItemOwnerIdAndEndIsBefore(userId, LocalDateTime.now()).stream()
+                bookingDtos = bookingRepository.findByItemOwnerIdAndEndIsBefore(userId, LocalDateTime.now(), page).stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
+                Collections.reverse(bookingDtos);
                 break;
             case "FUTURE":
-                bookingDtos = bookingRepository.findByItemOwnerIdAndStartIsAfter(userId, LocalDateTime.now()).stream()
+                bookingDtos = bookingRepository.findByItemOwnerIdAndStartIsAfter(userId, LocalDateTime.now(), page).stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
+                Collections.reverse(bookingDtos);
                 break;
             case "WAITING":
-                bookingDtos = bookingRepository.findByItemOwnerIdAndStatus(userId, Status.WAITING).stream()
+                bookingDtos = bookingRepository.findByItemOwnerIdAndStatus(userId, Status.WAITING, page).stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
+                Collections.reverse(bookingDtos);
                 break;
             case "REJECTED":
-                bookingDtos = bookingRepository.findByItemOwnerIdAndStatus(userId, Status.REJECTED).stream()
+                bookingDtos = bookingRepository.findByItemOwnerIdAndStatus(userId, Status.REJECTED, page).stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
+                Collections.reverse(bookingDtos);
                 break;
             default:
                 throw new ValidationException("Unknown state: " + status);
         }
 
-        Collections.reverse(bookingDtos);
+
         return bookingDtos;
     }
 
     public List<BookingDto> getBookingByStatus(String state, Long userId) {
         userService.checkUser(userId);
-        return bookingRepository.findByItemOwnerIdAndStatus(userId, Status.valueOf(state)).stream()
+        int from = 0;
+        int size = 10;
+
+        PageRequest page = PageRequest.of(0, 10);
+
+        return bookingRepository.findByItemOwnerIdAndStatus(userId, Status.valueOf(state), page).stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }

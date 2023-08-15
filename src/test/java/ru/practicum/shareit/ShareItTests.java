@@ -29,8 +29,6 @@ class ShareItTests {
 
     UserService userService;
 
-    UserMapper userMapper;
-
     ItemService itemService;
 
 	ItemMapper itemMapper;
@@ -39,12 +37,10 @@ class ShareItTests {
 
 	BookingMapper bookingMapper;
 
-
     @Autowired
-    public ShareItTests(UserService userService, UserMapper userMapper, ItemService itemService, ItemMapper itemMapper,
+    public ShareItTests(UserService userService, ItemService itemService, ItemMapper itemMapper,
 						BookingService bookingService, BookingMapper bookingMapper) {
         this.userService = userService;
-        this.userMapper = userMapper;
         this.itemService = itemService;
 		this.bookingService = bookingService;
 		this.bookingMapper = bookingMapper;
@@ -104,7 +100,7 @@ class ShareItTests {
         ItemDto itemDto = ItemDto.builder()
                 .id(1L)
                 .name("Disc")
-                .owner(userMapper.toUser(useDto))
+                .owner(UserMapper.toUser(useDto))
                 .available(true)
                 .description("Disc")
                 .build();
@@ -112,10 +108,17 @@ class ShareItTests {
 		itemService.createItem(itemDto, useDto.getId());
 
 		Assertions.assertEquals(useDto, userService.getUserById(useDto.getId()));
+
 		Assertions.assertEquals(itemDto.getId(), itemService.getItemById(itemDto.getId(), useDto.getId()).getId());
-		Assertions.assertEquals(itemDto.getDescription(), itemService.getItemById(itemDto.getId(), useDto.getId()).getDescription());
-		Assertions.assertEquals(itemDto.getAvailable(), itemService.getItemById(itemDto.getId(), useDto.getId()).getAvailable());
-		Assertions.assertEquals(itemDto.getOwner(), itemService.getItemById(itemDto.getId(), useDto.getId()).getOwner());
+
+		Assertions.assertEquals(itemDto.getDescription(),
+				itemService.getItemById(itemDto.getId(), useDto.getId()).getDescription());
+
+		Assertions.assertEquals(itemDto.getAvailable(),
+				itemService.getItemById(itemDto.getId(), useDto.getId()).getAvailable());
+
+		Assertions.assertEquals(itemDto.getOwner(),
+				itemService.getItemById(itemDto.getId(), useDto.getId()).getOwner());
     }
 
 	@Test
@@ -129,7 +132,7 @@ class ShareItTests {
 		ItemDto itemDto = ItemDto.builder()
 				.id(1L)
 				.name("Disc")
-				.owner(userMapper.toUser(userDto))
+				.owner(UserMapper.toUser(userDto))
 				.available(true)
 				.description("Disc")
 				.build();
@@ -153,7 +156,7 @@ class ShareItTests {
 		ItemDto itemDto = ItemDto.builder()
 				.id(1L)
 				.name("Disc")
-				.owner(userMapper.toUser(userDto))
+				.owner(UserMapper.toUser(userDto))
 				.available(true)
 				.description("Disc")
 				.build();
@@ -191,7 +194,7 @@ class ShareItTests {
 		itemDtos.add(ItemMapper.toItemDtoFromFullItemDto(itemService.getItemById(itemDto.getId(), userDto.getId())));
 
 		Assertions.assertEquals(userDto, userService.getUserById(userDto.getId()));
-		Assertions.assertEquals(itemDtos, itemService.getItemByDescription(itemDto.getName()));
+		Assertions.assertEquals(itemDtos, itemService.getItemByDescription(itemDto.getName(), 0, 10));
 	}
 
 	@Test
