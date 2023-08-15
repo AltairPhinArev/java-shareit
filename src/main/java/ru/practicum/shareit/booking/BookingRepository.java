@@ -21,7 +21,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     Boolean existsByItemId(Long itemId);
 
-    List<Booking> findByBookerId (Long userId, Pageable page);
+    List<Booking> findByBookerId(Long userId, Pageable page);
 
     List<Booking> findByItemOwnerIdAndStatus(Long bookerId, Status status, Pageable page);
 

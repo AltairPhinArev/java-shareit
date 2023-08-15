@@ -12,7 +12,7 @@ public interface ItemService {
 
     CommentDto createNewComment(InputCommentDto inputCommentDto, Long userId, Long itemId);
 
-    Collection<ItemDtoFull> getAllItemsByUserId(Long userId, Integer from ,Integer size);
+    Collection<ItemDtoFull> getAllItemsByUserId(Long userId, Integer from, Integer size);
 
     ItemDto createItem(ItemDto itemDto, Long userId);
 

@@ -3,11 +3,9 @@ package ru.practicum.shareit.item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 import ru.practicum.shareit.booking.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.ShortBookingDto;
@@ -85,7 +83,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemDtoFull> getAllItemsByUserId(Long userId, Integer from ,Integer size) {
+    public Collection<ItemDtoFull> getAllItemsByUserId(Long userId, Integer from, Integer size) {
         if (from < 0 || size <= 0) {
             throw new ValidationException("Illegal params");
         }

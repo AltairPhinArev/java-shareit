@@ -29,7 +29,7 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")
-    public Collection<ItemRequestDto> getAll( @RequestHeader("X-Sharer-User-Id") Long userId,
+    public Collection<ItemRequestDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
                                               @RequestParam(defaultValue = "0") Integer from,
                                               @RequestParam(defaultValue = "10") Integer size) {
         return itemRequestService.getAllItemRequest(userId, from, size);
