@@ -409,9 +409,16 @@ class ShareItTests {
                 .build();
 
         userService.createUser(userDto1);
-        User newUser = new User(3L, "User3", "third@third.ru");
-        UserDto returnUserDto = userService.createUser(UserMapper.toUserDto(newUser));
+
+        UserDto newUser = UserDto.builder()
+                .id(3L)
+                .name("User3")
+                .email("third@third.ru")
+                .build();
+
+        UserDto returnUserDto = userService.createUser(newUser);
         Long id = returnUserDto.getId();
+
         returnUserDto.setId(null);
         returnUserDto.setEmail("second@second.ru");
         final RegisterException exception = Assertions.assertThrows(
