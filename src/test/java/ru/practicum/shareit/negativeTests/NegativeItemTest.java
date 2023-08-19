@@ -49,9 +49,6 @@ public class NegativeItemTest {
         Assertions.assertEquals("Item with ID=-10 doesn't exist", exception.getMessage());
     }
 
-
-
-
     @Test
     public void shouldExceptionWhenGetItemWithDescription() {
         ItemService itemService1 = new ItemServiceImpl(itemRepository, null,  null,
@@ -70,5 +67,4 @@ public class NegativeItemTest {
                 });
         Assertions.assertEquals("Illegal params", exception.getMessage());
     }
-
 }
