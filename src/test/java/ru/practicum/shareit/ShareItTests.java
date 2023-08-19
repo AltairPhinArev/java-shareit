@@ -1,5 +1,6 @@
 package ru.practicum.shareit;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
@@ -11,6 +12,7 @@ import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingInputDTO;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.RegisterException;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 @SpringBootTest
 @AutoConfigureCache
@@ -368,7 +372,7 @@ class ShareItTests {
     }
 
     @Test
-    void shouldExceptionWhenCreateItemRequestWithWrongUserId() {
+    void testItemRequestWithWrongUserId() {
         UserDto userDto1 = UserDto.builder()
                 .id(2L)
                 .name("USER")
@@ -389,5 +393,31 @@ class ShareItTests {
                         LocalDateTime.of(2022, 1, 2, 3, 4, 5)));
         assertEquals("User with ID= -2  doesn't exist", exp.getMessage());
     }
+    @Test
+    public void testCheckUser() {
+        NotFoundException exp = assertThrows(NotFoundException.class,
+                () -> userService.checkUser(-2L));
+        assertEquals("User with ID= -2 doesn't exist", exp.getMessage());
+    }
 
+    @Test
+    void shouldExceptionWhenUpdateUserWithExistEmail() {
+        UserDto userDto1 = UserDto.builder()
+                .id(2L)
+                .name("USER")
+                .email("second@second.ru")
+                .build();
+
+        userService.createUser(userDto1);
+        User newUser = new User(3L, "User3", "third@third.ru");
+        UserDto returnUserDto = userService.createUser(UserMapper.toUserDto(newUser));
+        Long id = returnUserDto.getId();
+        returnUserDto.setId(null);
+        returnUserDto.setEmail("second@second.ru");
+        final RegisterException exception = Assertions.assertThrows(
+                RegisterException.class,
+                () -> userService.updateUser(returnUserDto, id));
+        Assertions.assertEquals("User with E-mail=second@second.ru exists",
+                exception.getMessage());
+    }
 }
