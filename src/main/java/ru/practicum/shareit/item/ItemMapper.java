@@ -71,4 +71,15 @@ public class ItemMapper {
                 comments
         );
     }
+
+    public static ItemDto toItemDtoFromItemFull(ItemDtoFull itemDtoFull) {
+        return new ItemDto(
+                itemDtoFull.getId(),
+                itemDtoFull.getName(),
+                itemDtoFull.getDescription(),
+                itemDtoFull.getAvailable(),
+                itemDtoFull.getOwner() != null ? itemDtoFull.getOwner() : null,
+                itemDtoFull.getRequestId() != null ? itemDtoFull.getRequestId() : null
+        );
+    }
 }

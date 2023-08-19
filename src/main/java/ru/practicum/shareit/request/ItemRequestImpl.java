@@ -55,7 +55,7 @@ public class ItemRequestImpl implements ItemRequestService {
     }
 
     @Override
-    public ItemRequestDto createItemRequest(ItemRequestDto itemRequestDto, Long userId) {
+    public ItemRequestDto createItemRequest(ItemRequestDto itemRequestDto, Long userId, LocalDateTime localDateTime) {
         if (itemRequestDto.getDescription() == null || itemRequestDto.getDescription().isBlank()) {
             throw new ValidationException("Description cannot be null or blank");
         }

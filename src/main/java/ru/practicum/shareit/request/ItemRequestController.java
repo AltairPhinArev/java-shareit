@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class ItemRequestController {
     @PostMapping
     public ItemRequestDto createItemRequest(@RequestHeader("X-Sharer-User-Id") Long userId,
                                             @RequestBody ItemRequestDto itemRequestDto) {
-        return itemRequestService.createItemRequest(itemRequestDto, userId);
+        return itemRequestService.createItemRequest(itemRequestDto, userId, LocalDateTime.of(2022, 1, 2, 3, 4, 5));
     }
 
     @GetMapping("/all")
