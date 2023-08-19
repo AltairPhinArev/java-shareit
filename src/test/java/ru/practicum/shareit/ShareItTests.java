@@ -391,9 +391,9 @@ class ShareItTests {
                         LocalDateTime.of(2022, 1, 2, 3, 4, 5)));
         assertEquals("User with ID= -2  doesn't exist", exp.getMessage());
     }
+
     @Test
     public void testCheckUser() {
-
         NotFoundException exp = assertThrows(NotFoundException.class,
                 () -> userService.checkUser(-2L));
         assertEquals("User with ID= -2 doesn't exist", exp.getMessage());
