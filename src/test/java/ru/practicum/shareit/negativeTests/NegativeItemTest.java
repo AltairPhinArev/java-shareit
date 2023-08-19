@@ -63,7 +63,7 @@ public class NegativeItemTest {
                 () -> {
                     boolean userCheckResult = userService.checkUser(123L);
                     List<Item> items = itemRepository.search("description", PageRequest.of(0, 10));
-                    itemService1.getItemByDescription(null, 0, -1 );
+                    itemService1.getItemByDescription(null, 0, -1);
                 });
         Assertions.assertEquals("Illegal params", exception.getMessage());
     }
