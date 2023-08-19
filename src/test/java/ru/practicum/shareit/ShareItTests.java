@@ -30,8 +30,6 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 
 @SpringBootTest
 @AutoConfigureCache
@@ -395,6 +393,7 @@ class ShareItTests {
     }
     @Test
     public void testCheckUser() {
+
         NotFoundException exp = assertThrows(NotFoundException.class,
                 () -> userService.checkUser(-2L));
         assertEquals("User with ID= -2 doesn't exist", exp.getMessage());
