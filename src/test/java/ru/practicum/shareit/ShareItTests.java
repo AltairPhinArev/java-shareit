@@ -312,8 +312,12 @@ class ShareItTests {
         assertEquals(bookingDto1, bookingDto);
 
         BookingDto bookingDto2 = bookingService.updateBooking(bookingDto.getId(), userDto.getId(), true);
-
         assertEquals(Status.APPROVED, bookingDto2.getStatus());
+
+        final ValidationException exception = Assertions.assertThrows(
+                ValidationException.class,
+                () -> bookingService.updateBooking(bookingDto.getId(), userDto.getId(), false));
+        assertEquals("The booking decision has already been made", exception.getMessage());
     }
 
     @Test
@@ -438,7 +442,6 @@ class ShareItTests {
         Assertions.assertEquals("User with ID= 100 doesn't exist",
                 exception.getMessage());
     }
-
 
     @Test
     public void testCreateItemRequest() {
@@ -974,4 +977,41 @@ class ShareItTests {
         assertEquals(userDtos, userService.getAll());
     }
 
+    @Test
+    public void testBookingUpdate() {
+        UserDto userDto = UserDto.builder()
+                .id(1L)
+                .name("USER")
+                .email("yaml@exmdt.com")
+                .build();
+        userService.createUser(userDto);
+
+        UserDto userDto1 = UserDto.builder()
+                .id(2L)
+                .name("USER")
+                .email("yampl@exmdt.com")
+                .build();
+        userService.createUser(userDto1);
+
+        ItemDto itemDto = ItemDto.builder()
+                .id(1L)
+                .name("Comp")
+                .owner(UserMapper.toUser(userDto))
+                .available(true)
+                .description("Comp")
+                .build();
+        itemService.createItem(itemDto, userDto.getId());
+
+        BookingInputDTO bookingInputDTO = BookingInputDTO.builder()
+                .itemId(1L)
+                .start(LocalDateTime.of(2023, 11, 10, 11, 11))
+                .end(LocalDateTime.of(2024, 11, 11, 12, 51))
+                .build();
+
+        BookingDto bookingDto = bookingService.createBooking(bookingInputDTO, userDto1.getId());
+
+        BookingDto bookingDto1 = bookingService.updateBooking(bookingDto.getId(), userDto1.getId(), false);
+
+        assertEquals(Status.CANCELED, bookingDto1.getStatus());
+    }
 }
