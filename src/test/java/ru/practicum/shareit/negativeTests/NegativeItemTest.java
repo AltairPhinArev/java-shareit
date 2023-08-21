@@ -22,6 +22,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -94,5 +95,11 @@ public class NegativeItemTest {
                 ValidationException.class,
                 () -> itemService.createItem(itemDto, 1L));
         Assertions.assertEquals("Illegal arguments for item", exception.getMessage());
+    }
+
+    @Test
+    public void testGetItemWithBlankDescription() {
+        List<ItemDto> itemDtos = itemService.getItemByDescription("", 0, 10);
+        assertEquals(0, itemDtos.size());
     }
 }

@@ -1024,10 +1024,4 @@ class ShareItTests {
 
         assertEquals("Illegal factor for comment", exception.getMessage());
     }
-
-    @Test
-    public void testGetItemWithBlankDescription() {
-       List<ItemDto> itemDtos = itemService.getItemByDescription("", 0, 10);
-       assertEquals(0, itemDtos.size());
-    }
 }
