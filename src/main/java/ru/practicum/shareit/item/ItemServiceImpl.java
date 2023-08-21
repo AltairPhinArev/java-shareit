@@ -56,7 +56,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto createNewComment(InputCommentDto inputCommentDto, Long userId, Long itemId) {
-
+        validate(inputCommentDto);
         BookingDto booking = bookingService.getBookingByItemIdAndUserId(itemId, userId);
 
         if (booking == null) {
@@ -68,7 +68,7 @@ public class ItemServiceImpl implements ItemService {
             userService.checkUser(userId);
             checkItem(itemId);
             ItemDto item = getItem(itemId);
-            validate(inputCommentDto, item);
+
 
             return CommentMapper.toCommentDto(commentRepository.save(new Comment(
                     null,
@@ -235,7 +235,7 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    private void validate(InputCommentDto inputCommentDto, ItemDto itemDto) {
+    private void validate(InputCommentDto inputCommentDto) {
         if (inputCommentDto.getText() == null || inputCommentDto.getText().isBlank()) {
             throw new ValidationException("Illegal factor for comment");
         }

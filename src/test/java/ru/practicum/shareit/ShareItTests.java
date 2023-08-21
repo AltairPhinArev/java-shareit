@@ -1014,4 +1014,19 @@ class ShareItTests {
 
         assertEquals(Status.CANCELED, bookingDto1.getStatus());
     }
+    @Test
+    public void testCreateCommentException() {
+        InputCommentDto inputCommentDto = InputCommentDto.builder().build();
+        final ValidationException exception = Assertions.assertThrows(
+                ValidationException.class,
+                () -> itemService.createNewComment(inputCommentDto, null, null));
+
+        assertEquals( "Illegal factor for comment", exception.getMessage());
+    }
+
+    @Test
+    public void testGetItemWithBlankDescription() {
+       List<ItemDto> itemDtos = itemService.getItemByDescription("", 0, 10);
+       assertEquals(0, itemDtos.size());
+    }
 }

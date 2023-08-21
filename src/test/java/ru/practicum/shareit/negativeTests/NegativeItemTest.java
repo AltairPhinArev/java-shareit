@@ -14,8 +14,10 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.ItemServiceImpl;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +41,7 @@ public class NegativeItemTest {
     UserService userService;
 
     @Test
-    public void shouldExceptionWhenGetItemWithWrongId() {
+    public void testGetItemExceptionWhenGetItemWithWrongId() {
         itemService = new ItemServiceImpl(itemRepository, null,
                 null, null, null, null);
 
@@ -50,7 +52,7 @@ public class NegativeItemTest {
     }
 
     @Test
-    public void shouldExceptionWhenGetItemWithDescription() {
+    public void testGetItemExceptionWhenGetItemWithDescription() {
         ItemService itemService1 = new ItemServiceImpl(itemRepository, null,  null,
                 null, null, null);
         when(userService.checkUser(any(Long.class)))
@@ -66,5 +68,31 @@ public class NegativeItemTest {
                     itemService1.getItemByDescription(null, 0, -1);
                 });
         Assertions.assertEquals("Illegal params", exception.getMessage());
+    }
+
+    @Test
+    public void testCheckItemException() {
+        final NotFoundException exception = Assertions.assertThrows(
+                NotFoundException.class,
+                () -> itemService.checkItem(-10L));
+        Assertions.assertEquals("Can't find item with ID= -10", exception.getMessage());
+    }
+
+    @Test
+    public void testCreateItemExceptionFullOfNull() {
+        ItemDto itemDto = ItemDto.builder().build();
+
+        UserDto userDto2 = UserDto.builder()
+                .id(1L)
+                .name("USER")
+                .email("qwqw1212yampl@exmdt.com")
+                .build();
+
+        UserDto userDto = userService.createUser(userDto2);
+
+        final ValidationException exception = Assertions.assertThrows(
+                ValidationException.class,
+                () -> itemService.createItem(itemDto, 1L));
+        Assertions.assertEquals("Illegal arguments for item", exception.getMessage());
     }
 }
