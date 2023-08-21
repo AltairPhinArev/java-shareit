@@ -60,6 +60,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUserById(Long userId) {
+        checkUser(userId);
         userRepository.deleteById(userId);
     }
 

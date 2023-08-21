@@ -86,9 +86,4 @@ public class ItemRequestImpl implements ItemRequestService {
                 .sorted(Comparator.comparing(ItemRequestDto::getCreated))
                 .collect(toList());
     }
-
-    @Override
-    public void deleteItemRequestById(Long itemRequestId) {
-
-    }
 }

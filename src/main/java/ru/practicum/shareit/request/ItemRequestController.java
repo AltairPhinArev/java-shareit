@@ -49,10 +49,4 @@ public class ItemRequestController {
                                                    @RequestParam(defaultValue = "10") Integer size) {
         return itemRequestService.getOwnItemRequests(userId, from, size);
     }
-
-
-    @DeleteMapping("/{itemRequestId}")
-    public void delete(@PathVariable Long itemRequestId) {
-        itemRequestService.deleteItemRequestById(itemRequestId);
-    }
 }

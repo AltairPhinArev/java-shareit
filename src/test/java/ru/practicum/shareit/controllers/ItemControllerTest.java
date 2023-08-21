@@ -50,7 +50,7 @@ public class ItemControllerTest {
     CommentDto commentDto = new CommentDto(1L, "Text comment", item,
             user.getName(), LocalDateTime.of(2022, 3, 5, 1, 2, 3));
 
-    List listItemDto = new ArrayList<>();
+    List<ItemDto> listItemDto = new ArrayList<>();
 
     @Test
     void createItem() throws Exception {

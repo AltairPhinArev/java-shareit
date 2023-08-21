@@ -100,6 +100,7 @@ public class ItemServiceImpl implements ItemService {
             ShortBookingDto lastBooking = null;
 
             List<CommentDto> comments = new ArrayList<>();
+
             if (commentRepository.existsByItemId(item.getId())) {
                 comments.addAll(commentRepository.findByItemId(item.getId()).stream()
                         .map(CommentMapper::toCommentDto)

@@ -15,8 +15,6 @@ public interface BookingService {
 
     BookingDto updateBooking(Long bookingId, Long userId, Boolean approved);
 
-    void deleteBooking(Long bookingId);
-
     BookingDto getBookingByItemIdAndUserId(Long itemId, Long userId);
 
     List<BookingDto> getBookingsByOwner(String status, Long userId, Integer from, Integer size);

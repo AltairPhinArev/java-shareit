@@ -148,11 +148,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void deleteBooking(Long bookingId) {
-        bookingRepository.deleteById(bookingId);
-    }
-
-    @Override
     public List<BookingDto> getBookingsByOwner(String status, Long userId, Integer from, Integer size) {
         userService.checkUser(userId);
         if (from < 0 || size <= 0) {
@@ -204,18 +199,6 @@ public class BookingServiceImpl implements BookingService {
 
 
         return bookingDtos;
-    }
-
-    public List<BookingDto> getBookingByStatus(String state, Long userId) {
-        userService.checkUser(userId);
-        int from = 0;
-        int size = 10;
-
-        PageRequest page = PageRequest.of(0, 10);
-
-        return bookingRepository.findByItemOwnerIdAndStatus(userId, Status.valueOf(state), page).stream()
-                .map(BookingMapper::toBookingDto)
-                .collect(Collectors.toList());
     }
 
     @Override

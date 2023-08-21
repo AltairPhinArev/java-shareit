@@ -17,6 +17,4 @@ public interface ItemRequestService {
     ItemRequestDto getItemRequestById(Long itemRequestId, Long userId);
 
     List<ItemRequestDto> getOwnItemRequests(Long userId, Integer from, Integer size);
-
-    void deleteItemRequestById(Long itemRequestId);
 }

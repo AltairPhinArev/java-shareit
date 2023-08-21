@@ -46,17 +46,6 @@ public class ItemMapper {
         );
     }
 
-    public static Item toItem(ItemDtoFull itemDtoFull) {
-        return new Item(
-                itemDtoFull.getId(),
-                itemDtoFull.getName(),
-                itemDtoFull.getDescription(),
-                itemDtoFull.getAvailable(),
-                itemDtoFull.getOwner(),
-                itemDtoFull.getRequestId() != null ? itemDtoFull.getRequestId() : null
-        );
-    }
-
     public static ItemDtoFull toItemDtoFull(Item item, ShortBookingDto lastBooking, ShortBookingDto nextBooking,
                                           List<CommentDto> comments) {
         return new ItemDtoFull(
@@ -69,17 +58,6 @@ public class ItemMapper {
                 lastBooking,
                 nextBooking,
                 comments
-        );
-    }
-
-    public static ItemDto toItemDtoFromItemFull(ItemDtoFull itemDtoFull) {
-        return new ItemDto(
-                itemDtoFull.getId(),
-                itemDtoFull.getName(),
-                itemDtoFull.getDescription(),
-                itemDtoFull.getAvailable(),
-                itemDtoFull.getOwner() != null ? itemDtoFull.getOwner() : null,
-                itemDtoFull.getRequestId() != null ? itemDtoFull.getRequestId() : null
         );
     }
 }

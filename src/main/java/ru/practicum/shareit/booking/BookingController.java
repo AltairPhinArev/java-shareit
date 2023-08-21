@@ -55,9 +55,4 @@ public class BookingController {
                                     @RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam Boolean approved) {
         return bookingService.updateBooking(bookingId, userId, approved);
     }
-
-    @DeleteMapping
-    public void deleteBookingById(@PathVariable Long bookingId) {
-        bookingService.deleteBooking(bookingId);
-    }
 }

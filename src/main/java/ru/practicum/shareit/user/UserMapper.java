@@ -23,12 +23,4 @@ public class UserMapper {
                 userDto.getEmail()
         );
     }
-
-    public static List<UserDto> mapUserListToUserDtoList(List<User> users) {
-        List<UserDto> result = new ArrayList<>();
-        for (User user : users) {
-            result.add(toUserDto(user));
-        }
-        return result;
-    }
 }
