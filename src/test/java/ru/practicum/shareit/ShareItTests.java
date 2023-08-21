@@ -20,7 +20,7 @@ import ru.practicum.shareit.item.ItemServiceImpl;
 import ru.practicum.shareit.item.comment.CommentRepository;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.comment.dto.InputCommentDto;
-import ru.practicum.shareit.item.comment.model.Comment;
+
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoFull;
 import ru.practicum.shareit.request.ItemRequestImpl;

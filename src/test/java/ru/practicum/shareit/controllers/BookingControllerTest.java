@@ -52,7 +52,7 @@ public class BookingControllerTest {
             new Item(1L, "FirstItem", "DescriptionOfFirstItem", true,
                     new User(1L, "FirstUser", "first@email.ru"), null),
             new User(2L, "SecondUser", "second@email.ru"), Status.WAITING);
-    List listBookingDto = new ArrayList<>();
+    List<BookingInputDTO> listBookingDto = new ArrayList<>();
 
     @Test
     void createBooking() throws Exception {
