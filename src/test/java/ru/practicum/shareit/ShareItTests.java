@@ -1014,6 +1014,7 @@ class ShareItTests {
 
         assertEquals(Status.CANCELED, bookingDto1.getStatus());
     }
+
     @Test
     public void testCreateCommentException() {
         InputCommentDto inputCommentDto = InputCommentDto.builder().build();
@@ -1021,7 +1022,7 @@ class ShareItTests {
                 ValidationException.class,
                 () -> itemService.createNewComment(inputCommentDto, null, null));
 
-        assertEquals( "Illegal factor for comment", exception.getMessage());
+        assertEquals("Illegal factor for comment", exception.getMessage());
     }
 
     @Test
