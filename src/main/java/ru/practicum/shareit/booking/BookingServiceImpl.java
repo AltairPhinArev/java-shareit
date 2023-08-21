@@ -65,7 +65,7 @@ public class BookingServiceImpl implements BookingService {
         if (booking.getBooker().getId().equals(userId)) {
             if (!approved) {
                 booking.setStatus(Status.CANCELED);
-                log.info("User with ID={} CANCELED booking with ID={}", userId, bookingId);
+                log.info("Booker with ID={} CANCELED booking with ID={}", userId, bookingId);
             } else {
                 throw new NotFoundException("Only the owner of the item can confirm the booking");
             }

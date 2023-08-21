@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +22,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@Slf4j
 public class ItemRequestImpl implements ItemRequestService {
 
     ItemRequestRepository itemRequestRepository;
@@ -61,6 +63,7 @@ public class ItemRequestImpl implements ItemRequestService {
         }
         ItemRequest itemRequest = ItemRequestMapper.toCreatedItemRequest(itemRequestDto,
                 UserMapper.toUser(userService.getUserById(userId)), LocalDateTime.now());
+        log.info("ItemRequest was created by user = {}", userId);
         return ItemRequestMapper.toItemRequestDto(itemRequestRepository.save(itemRequest),
                 itemService.getItemByRequestId(itemRequestDto.getId()));
     }
@@ -76,9 +79,11 @@ public class ItemRequestImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDto> getOwnItemRequests(Long userId, Integer from, Integer size) {
         userService.checkUser(userId);
+
         if (from < 0 || size < 0) {
             throw new ValidationException("Illegal params");
         }
+
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
         return itemRequestRepository.findAllByRequesterId(userId, page).stream()
                 .map(itemRequest -> ItemRequestMapper.toItemRequestDto(itemRequest,

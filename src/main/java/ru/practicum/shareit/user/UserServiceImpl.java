@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
@@ -54,7 +56,7 @@ public class UserServiceImpl implements UserService {
             }
 
         }
-
+        log.info("User has benn updated by id {}", userId);
         return UserMapper.toUserDto(userRepository.save(user));
     }
 

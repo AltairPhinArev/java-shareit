@@ -69,6 +69,7 @@ public class ItemServiceImpl implements ItemService {
             checkItem(itemId);
             ItemDto item = getItem(itemId);
 
+        log.info("Comment from user = {} to item {}", userId, itemId);
 
             return CommentMapper.toCommentDto(commentRepository.save(new Comment(
                     null,
@@ -125,6 +126,7 @@ public class ItemServiceImpl implements ItemService {
         validate(itemDto, userId);
         User owner = UserMapper.toUser(userService.getUserById(userId));
         itemDto.setOwner(owner);
+        log.info("Item has been created by user = {}", userId);
         return ItemMapper.toItemDto(itemRepository.save(ItemMapper.toItem(itemDto)));
     }
 
@@ -153,6 +155,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         validate(ItemMapper.toItemDto(item), userId);
+        log.info("item was updated by id {}, from owner {}", item.getId(), userId);
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
@@ -180,6 +183,7 @@ public class ItemServiceImpl implements ItemService {
         if (userId.equals(item.getOwner().getId())) {
             lastBooking = bookingService.getLastBooking(itemId);
             nextBooking = bookingService.getNextBooking(itemId);
+            log.info("Request from owner -> {}, to Item -> {}", userId, itemId);
         }
 
         if (commentRepository.existsByItemId(itemId)) {
@@ -188,6 +192,7 @@ public class ItemServiceImpl implements ItemService {
                     .collect(Collectors.toList()));
         }
 
+        log.info("Item by Id {}", itemId);
         return ItemMapper.toItemDtoFull(item, lastBooking, nextBooking, comments);
     }
 
@@ -201,8 +206,10 @@ public class ItemServiceImpl implements ItemService {
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
 
         if (description == null || description.isBlank()) {
+            log.info("description was null or blank and will be returned empty List");
             return Collections.emptyList();
         } else {
+            log.info("search by description -> " + description + " with parameters ({},{})", from, size);
             return itemRepository.search(description, page).stream()
                     .filter(Item::getAvailable)
                     .map(ItemMapper::toItemDto)
