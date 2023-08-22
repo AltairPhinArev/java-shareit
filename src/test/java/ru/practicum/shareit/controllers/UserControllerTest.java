@@ -32,10 +32,15 @@ public class UserControllerTest {
     @Autowired
     MockMvc mvc;
 
-    UserDto userDto = new UserDto(1L, "Alex", "alex@alex.ru");
-    List<UserDto> listUserDto = List.of(
-            new UserDto(1L, "First", "first@first.ru"),
-            new UserDto(2L, "Second", "second@second.ru"));
+    UserDto userDto = UserDto.builder()
+            .id(1L)
+            .name("Builder")
+            .email("Builder@mail.ru")
+            .build();
+
+    List<UserDto> listOfUserDtos = List.of(
+            new UserDto(1L, "First", "first@mail.ru"),
+            new UserDto(2L, "Second", "second@mail.ru"));
 
     @Test
     void createUser() throws Exception {
@@ -74,12 +79,12 @@ public class UserControllerTest {
     @Test
     void getUsers() throws Exception {
         when(userService.getAll())
-                .thenReturn(listUserDto);
+                .thenReturn(listOfUserDtos);
         mvc.perform(get("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(listUserDto)));
+                .andExpect(content().json(mapper.writeValueAsString(listOfUserDtos)));
     }
 
     @Test

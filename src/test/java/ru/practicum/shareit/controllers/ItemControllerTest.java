@@ -15,7 +15,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -42,23 +41,44 @@ public class ItemControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    User user = new User(1L, "First", "first@first.ru");
+    User user = User.builder()
+            .id(1L)
+            .name("First")
+            .email("first@first.ru")
+            .build();
 
-    Item item = new Item(1L, "Item1", "Description1", true, user, null);
-    ItemDto itemDto = new ItemDto(1L, "Item1", "Description1", true,
-            user, null);
-    CommentDto commentDto = new CommentDto(1L, "Text comment", item,
-            user.getName(), LocalDateTime.of(2022, 3, 5, 1, 2, 3));
+    Item item = Item.builder()
+            .id(1L)
+            .name("Item1")
+            .description("Description")
+            .available(true)
+            .owner(user)
+            .requestId(null)
+            .build();
+    ItemDto itemDto = ItemDto.builder()
+            .id(1L)
+            .name("Item1")
+            .description("Description")
+            .available(true)
+            .owner(user)
+            .requestId(null)
+            .build();
+    CommentDto commentDto = CommentDto.builder()
+            .id(1L)
+            .text("Text comment")
+            .item(item)
+            .authorName(user.getName())
+            .created(LocalDateTime.of(2022, 3, 5, 1, 2, 3))
+            .build();
 
-    List<ItemDto> listItemDto = new ArrayList<>();
+    List<ItemDto> listOfItemDtos = new ArrayList<>();
 
     @Test
-    void createItem() throws Exception {
+    void testCreateItemController() throws Exception {
         when(itemService.createItem(any(), any(Long.class)))
                 .thenReturn(itemDto);
         mvc.perform(post("/items")
                         .content(mapper.writeValueAsString(itemDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
@@ -70,13 +90,12 @@ public class ItemControllerTest {
     }
 
     @Test
-    void getItem() throws Exception {
+    void testGetItemController() throws Exception {
         when(itemService.getItemById(any(Long.class), any(Long.class)))
                 .thenReturn(ItemMapper.toItemDtoFull(ItemMapper.toItem(itemDto),
                         null, null, null));
         mvc.perform(get("/items/1")
                         .content(mapper.writeValueAsString(itemDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
@@ -89,13 +108,12 @@ public class ItemControllerTest {
     }
 
     @Test
-    void getItemsByOwner() throws Exception {
+    void testGetItemsByOwnerController() throws Exception {
         when(itemService.getAllItemsByUserId(any(Long.class), any(Integer.class), nullable(Integer.class)))
                 .thenReturn(List.of(ItemMapper.toItemDtoFull(ItemMapper.toItem(itemDto),
                         null, null, null)));
         mvc.perform(get("/items")
-                        .content(mapper.writeValueAsString(listItemDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
+                        .content(mapper.writeValueAsString(listOfItemDtos))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
@@ -108,19 +126,18 @@ public class ItemControllerTest {
     }
 
     @Test
-    void deleteItem() throws Exception {
+    void testDeleteItemController() throws Exception {
         mvc.perform(delete("/items/1")
                         .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void updateItem() throws Exception {
+    void testUpdateItemController() throws Exception {
         when(itemService.updateItem(any(), any(Long.class), any(Long.class)))
                 .thenReturn(itemDto);
         mvc.perform(patch("/items/1")
                         .content(mapper.writeValueAsString(itemDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
@@ -134,12 +151,11 @@ public class ItemControllerTest {
 
 
     @Test
-    void getItemsBySearchQuery() throws Exception {
+    void testGetItemsBySearchQueryController() throws Exception {
         when(itemService.getItemByDescription(any(String.class), any(Integer.class), nullable(Integer.class)))
                 .thenReturn(List.of(itemDto));
         mvc.perform(get("/items/search?text=description")
-                        .content(mapper.writeValueAsString(listItemDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
+                        .content(mapper.writeValueAsString(listOfItemDtos))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
@@ -152,12 +168,11 @@ public class ItemControllerTest {
     }
 
     @Test
-    void createComment() throws Exception {
+    void testCreateCommentController() throws Exception {
         when(itemService.createNewComment(any(), any(Long.class), any(Long.class)))
                 .thenReturn(commentDto);
         mvc.perform(post("/items/1/comment")
                         .content(mapper.writeValueAsString(commentDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))

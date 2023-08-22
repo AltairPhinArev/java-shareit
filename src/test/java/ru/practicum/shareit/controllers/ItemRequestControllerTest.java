@@ -39,14 +39,27 @@ public class ItemRequestControllerTest {
 
     @Autowired
     private MockMvc mvc;
-    User user = new User(1L, "Anton", "mail@mail.ru");
+    User user = User.builder()
+            .id(1L)
+            .name("Anton")
+            .email("mail@mail.ru")
+            .build();
+    ItemRequestDto itemRequestDto = ItemRequestDto.builder()
+            .id(1L)
+            .description("STRING")
+            .requester(user)
+            .created(LocalDateTime.now())
+            .items(null)
+            .build();
 
-    ItemRequestDto itemRequestDto = new ItemRequestDto(
-            1L, "STRING", user, LocalDateTime.now(), null);
+    ItemRequest itemRequest = ItemRequest.builder()
+            .id(1L)
+            .description("STRING")
+            .requester(user)
+            .created(LocalDateTime.now())
+            .build();
 
-    ItemRequest itemRequest = new ItemRequest(
-            1L, "STRING", user, LocalDateTime.now());
-    List listItemRequestDto = new ArrayList<>();
+    List<ItemRequestDto> listOfItemRequestDtos = new ArrayList<>();
 
     @Test
     void createItemRequest() throws Exception {
@@ -95,7 +108,7 @@ public class ItemRequestControllerTest {
         when(itemRequestService.getOwnItemRequests(any(Long.class),  eq(0), eq(10)))
                 .thenReturn(List.of(itemRequestDto));
         mvc.perform(get("/requests")
-                        .content(mapper.writeValueAsString(listItemRequestDto))
+                        .content(mapper.writeValueAsString(listOfItemRequestDtos))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
@@ -114,7 +127,7 @@ public class ItemRequestControllerTest {
         when(itemRequestService.getAllItemRequest(any(Long.class), any(Integer.class), nullable(Integer.class)))
                 .thenReturn(List.of(itemRequestDto));
         mvc.perform(get("/requests/all")
-                        .content(mapper.writeValueAsString(listItemRequestDto))
+                        .content(mapper.writeValueAsString(listOfItemRequestDtos))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))

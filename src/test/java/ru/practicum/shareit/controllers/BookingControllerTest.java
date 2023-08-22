@@ -40,22 +40,26 @@ public class BookingControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    BookingInputDTO bookingInputDto = new BookingInputDTO(
-            1L,
-            LocalDateTime.of(2030, 12, 25, 12, 00, 00),
-            LocalDateTime.of(2030, 12, 26, 12, 00, 00));
+    BookingInputDTO bookingInputDto = BookingInputDTO.builder()
+            .itemId(1L)
+            .start(LocalDateTime.of(2030, 12, 25, 12, 00, 00))
+            .end(LocalDateTime.of(2030, 12, 26, 12, 00, 00))
+            .build();
 
-    BookingDto bookingDto = new BookingDto(
-            1L,
-            LocalDateTime.of(2030, 12, 25, 12, 00, 00),
-            LocalDateTime.of(2030, 12, 26, 12, 00, 00),
-            new Item(1L, "FirstItem", "DescriptionOfFirstItem", true,
-                    new User(1L, "FirstUser", "first@email.ru"), null),
-            new User(2L, "SecondUser", "second@email.ru"), Status.WAITING);
-    List<BookingInputDTO> listBookingDto = new ArrayList<>();
+    BookingDto bookingDto = BookingDto.builder()
+            .id(1L)
+            .start(LocalDateTime.of(2030, 12, 25, 12, 00, 00))
+            .end(LocalDateTime.of(2030, 12, 26, 12, 00, 00))
+            .item(new Item(1L, "FirstItem", "DescriptionOfFirstItem", true,
+                    new User(1L, "FirstUser", "first@email.ru"), null))
+            .booker(new User(2L, "SecondUser", "second@email.ru"))
+            .status(Status.WAITING)
+            .build();
+
+    List<BookingInputDTO> listOfBookingDtos = new ArrayList<>();
 
     @Test
-    void createBooking() throws Exception {
+    void testCreateBookingController() throws Exception {
         when(bookingService.createBooking(any(), any(Long.class)))
                 .thenReturn(bookingDto);
 
@@ -74,7 +78,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    void getBooking() throws Exception {
+    void testGetBookingController() throws Exception {
         when(bookingService.getBookingById(any(Long.class), any(Long.class)))
                 .thenReturn(bookingDto);
 
@@ -94,14 +98,14 @@ public class BookingControllerTest {
     }
 
     @Test
-    void getBookings() throws Exception {
+    void testGetBookingsController() throws Exception {
         when(bookingService.getAllBookingsByUserId(any(String.class), any(Long.class),
                 any(Integer.class), nullable(Integer.class)))
                 .thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings")
 
-                        .content(mapper.writeValueAsString(listBookingDto))
+                        .content(mapper.writeValueAsString(listOfBookingDtos))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
@@ -118,13 +122,13 @@ public class BookingControllerTest {
     }
 
     @Test
-    void getBookingsByOwner() throws Exception {
+    void testGetBookingsByOwnerController() throws Exception {
         when(bookingService.getBookingsByOwner(any(String.class), any(Long.class),
                 any(Integer.class), nullable(Integer.class)))
                 .thenReturn(List.of(bookingDto));
 
         mvc.perform(get("/bookings/owner?from=0&size=10")
-                        .content(mapper.writeValueAsString(listBookingDto))
+                        .content(mapper.writeValueAsString(listOfBookingDtos))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
@@ -141,7 +145,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    void updateBooking() throws Exception {
+    void testUpdateBookingController() throws Exception {
         when(bookingService.updateBooking(any(Long.class), any(Long.class), any(Boolean.class)))
                 .thenReturn(bookingDto);
         mvc.perform(patch("/bookings/1")
