@@ -7,9 +7,6 @@ import javax.persistence.*;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @Data
 @Entity
 @Table(name = "item_request")

@@ -10,14 +10,13 @@ import ru.practicum.shareit.item.dto.ItemDtoFull;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping("/items")
 public class ItemController {
 
     ItemService itemService;
+
+    final static String USER_ID = "X-Sharer-User-Id";
 
     @Autowired
     public ItemController(ItemService itemService) {
@@ -25,14 +24,14 @@ public class ItemController {
     }
 
     @GetMapping
-    public Collection<ItemDtoFull> getAllItemsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public Collection<ItemDtoFull> getAllItemsByUserId(@RequestHeader(USER_ID) Long userId,
                                                @RequestParam(defaultValue = "0") Integer from,
                                                @RequestParam(defaultValue = "10") Integer size) {
         return itemService.getAllItemsByUserId(userId, from, size);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDtoFull getItemById(@PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDtoFull getItemById(@PathVariable Long itemId, @RequestHeader(USER_ID) Long userId) {
         return itemService.getItemById(itemId, userId);
     }
 
@@ -45,14 +44,14 @@ public class ItemController {
 
     @ResponseBody
     @PostMapping
-    public ItemDto createItem(@RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto createItem(@RequestBody ItemDto itemDto, @RequestHeader(USER_ID) Long userId) {
         return itemService.createItem(itemDto, userId);
     }
 
     @ResponseBody
     @PostMapping(value = "/{itemId}/comment")
     public CommentDto createComment(@RequestBody InputCommentDto commentDto,
-                                    @RequestHeader("X-Sharer-User-Id") Long userId,
+                                    @RequestHeader(USER_ID) Long userId,
                                     @PathVariable Long itemId) {
         return itemService.createNewComment(commentDto, userId, itemId);
     }
@@ -60,7 +59,7 @@ public class ItemController {
     @ResponseBody
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@RequestBody ItemDto itemDto, @PathVariable Long itemId,
-                              @RequestHeader("X-Sharer-User-Id") Long userId) {
+                              @RequestHeader(USER_ID) Long userId) {
         return itemService.updateItem(itemDto, itemId, userId);
     }
 

@@ -8,14 +8,14 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * TODO Sprint add-item-requests.
- */
+
 @RestController
 @RequestMapping(path = "/requests")
 public class ItemRequestController {
 
     ItemRequestService itemRequestService;
+
+    final static String USER_ID = "X-Sharer-User-Id";
 
     @Autowired
     public ItemRequestController(ItemRequestService itemRequestService) {
@@ -24,13 +24,13 @@ public class ItemRequestController {
 
     @ResponseBody
     @PostMapping
-    public ItemRequestDto createItemRequest(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ItemRequestDto createItemRequest(@RequestHeader(USER_ID) Long userId,
                                             @RequestBody ItemRequestDto itemRequestDto) {
-        return itemRequestService.createItemRequest(itemRequestDto, userId, LocalDateTime.of(2022, 1, 2, 3, 4, 5));
+        return itemRequestService.createItemRequest(itemRequestDto, userId);
     }
 
     @GetMapping("/all")
-    public Collection<ItemRequestDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public Collection<ItemRequestDto> getAll(@RequestHeader(USER_ID) Long userId,
                                               @RequestParam(defaultValue = "0") Integer from,
                                               @RequestParam(defaultValue = "10") Integer size) {
         return itemRequestService.getAllItemRequest(userId, from, size);
@@ -38,13 +38,13 @@ public class ItemRequestController {
 
     @GetMapping("/{itemRequestId}")
     public ItemRequestDto getItemRequestById(@PathVariable Long itemRequestId,
-                                             @RequestHeader("X-Sharer-User-Id") Long userId) {
+                                             @RequestHeader(USER_ID) Long userId) {
         return itemRequestService.getItemRequestById(itemRequestId, userId);
     }
 
 
     @GetMapping
-    public List<ItemRequestDto> getOwnItemRequests(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public List<ItemRequestDto> getOwnItemRequests(@RequestHeader(USER_ID) Long userId,
                                                    @RequestParam(defaultValue = "0") Integer from,
                                                    @RequestParam(defaultValue = "10") Integer size) {
         return itemRequestService.getOwnItemRequests(userId, from, size);

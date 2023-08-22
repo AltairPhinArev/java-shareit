@@ -63,7 +63,7 @@ public class ItemRequestControllerTest {
 
     @Test
     void createItemRequest() throws Exception {
-        when(itemRequestService.createItemRequest(any(), any(Long.class), any(LocalDateTime.class)))
+        when(itemRequestService.createItemRequest(any(), any(Long.class)))
                 .thenReturn(itemRequestDto);
 
 

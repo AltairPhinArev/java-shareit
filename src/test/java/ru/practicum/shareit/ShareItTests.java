@@ -479,8 +479,7 @@ class ShareItTests {
                 .created(LocalDateTime.now())
                 .build();
 
-        ItemRequestDto itemRequestDto1 = itemRequestService.createItemRequest(itemRequestDto, user.getId(),
-                LocalDateTime.of(2022, 1, 2, 3, 4, 5));
+        ItemRequestDto itemRequestDto1 = itemRequestService.createItemRequest(itemRequestDto, user.getId());
 
         assertEquals(itemRequestDto.getId(), itemRequestDto1.getId());
         assertEquals(itemRequestDto.getRequester(), itemRequestDto1.getRequester());
@@ -527,7 +526,7 @@ class ShareItTests {
                 .items(itemDtos.stream().collect(Collectors.toList()))
                 .build();
 
-        itemRequestService.createItemRequest(itemRequestDto, user.getId(), LocalDateTime.of(2022, 1, 2, 3, 4, 5));
+        itemRequestService.createItemRequest(itemRequestDto, user.getId());
 
 
         ItemRequestDto itemRequestDto1 = itemRequestService.getItemRequestById(itemRequestDto.getId(), user.getId());
@@ -556,8 +555,7 @@ class ShareItTests {
                 .build();
 
         NotFoundException exp = assertThrows(NotFoundException.class,
-                () -> itemRequestService.createItemRequest(itemRequestDto, -2L,
-                        LocalDateTime.of(2022, 1, 2, 3, 4, 5)));
+                () -> itemRequestService.createItemRequest(itemRequestDto, -2L));
         assertEquals("User with ID= -2  doesn't exist", exp.getMessage());
     }
 
@@ -668,8 +666,7 @@ class ShareItTests {
         assertEquals(itemRequestDto.getRequester(), ItemRequestMapper.toItemRequest(itemRequestDto).getRequester());
         assertEquals(itemRequestDto.getCreated(), ItemRequestMapper.toItemRequest(itemRequestDto).getCreated());
 
-        itemRequestService.createItemRequest(itemRequestDto, user.getId(),
-                LocalDateTime.of(2022, 1, 2, 3, 4, 5));
+        itemRequestService.createItemRequest(itemRequestDto, user.getId());
 
         List<ItemRequestDto> itemRequestDtos = new ArrayList<>(itemRequestService.getAllItemRequest(user.getId(),
                 0, 10));
@@ -961,8 +958,7 @@ class ShareItTests {
                 .items(itemDtos)
                 .build();
 
-        itemRequestService.createItemRequest(itemRequestDto, user.getId(),
-                LocalDateTime.of(2022, 1, 2, 3, 4, 5));
+        itemRequestService.createItemRequest(itemRequestDto, user.getId());
 
         List<ItemRequestDto> itemRequestDtos = new ArrayList<>(itemRequestService.getOwnItemRequests(user.getId(),
                 0, 10));

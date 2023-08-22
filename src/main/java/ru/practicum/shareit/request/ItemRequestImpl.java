@@ -57,10 +57,11 @@ public class ItemRequestImpl implements ItemRequestService {
     }
 
     @Override
-    public ItemRequestDto createItemRequest(ItemRequestDto itemRequestDto, Long userId, LocalDateTime localDateTime) {
+    public ItemRequestDto createItemRequest(ItemRequestDto itemRequestDto, Long userId) {
         if (itemRequestDto.getDescription() == null || itemRequestDto.getDescription().isBlank()) {
             throw new ValidationException("Description cannot be null or blank");
         }
+        itemRequestDto.setCreated(LocalDateTime.now());
         ItemRequest itemRequest = ItemRequestMapper.toCreatedItemRequest(itemRequestDto,
                 UserMapper.toUser(userService.getUserById(userId)), LocalDateTime.now());
         log.info("ItemRequest was created by user = {}", userId);

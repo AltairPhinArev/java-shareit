@@ -12,7 +12,7 @@ public interface ItemRequestService {
 
     Collection<ItemRequestDto> getAllItemRequest(Long userId, Integer from, Integer size);
 
-    ItemRequestDto createItemRequest(ItemRequestDto itemRequestDto, Long userId, LocalDateTime localDateTime);
+    ItemRequestDto createItemRequest(ItemRequestDto itemRequestDto, Long userId);
 
     ItemRequestDto getItemRequestById(Long itemRequestId, Long userId);
 
