@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class ItemRequestController {
 
     ItemRequestService itemRequestService;
 
-    final static String USER_ID = "X-Sharer-User-Id";
+    static final String USER_ID = "X-Sharer-User-Id";
 
     @Autowired
     public ItemRequestController(ItemRequestService itemRequestService) {

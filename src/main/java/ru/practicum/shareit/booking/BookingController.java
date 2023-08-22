@@ -15,7 +15,7 @@ public class BookingController {
 
     BookingService bookingService;
 
-    final static String USER_ID = "X-Sharer-User-Id";
+    static final String USER_ID = "X-Sharer-User-Id";
 
     @Autowired
     public BookingController(BookingService bookingService) {

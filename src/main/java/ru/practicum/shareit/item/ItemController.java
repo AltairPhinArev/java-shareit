@@ -16,7 +16,7 @@ public class ItemController {
 
     ItemService itemService;
 
-    final static String USER_ID = "X-Sharer-User-Id";
+    static final String USER_ID = "X-Sharer-User-Id";
 
     @Autowired
     public ItemController(ItemService itemService) {
