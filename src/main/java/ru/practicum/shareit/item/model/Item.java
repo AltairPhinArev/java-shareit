@@ -28,19 +28,20 @@ public class Item {
     @JoinColumn(name = "owner_id")
     User owner;
 
-    //ItemRequest request;
+    @Column(name = "request_id")
+    Long requestId;
 
 
     public Item() {
     }
 
     @Builder
-    public Item(Long id, String name, String description, Boolean available, User owner) {
+    public Item(Long id, String name, String description, Boolean available, User owner, Long requestId) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.available = available;
         this.owner = owner;
-        //this.request = request;
+        this.requestId = requestId;
     }
 }

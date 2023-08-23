@@ -1,38 +1,19 @@
 package ru.practicum.shareit.request;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
-public class ItemRequestService {
+public interface ItemRequestService {
 
-    ItemRequestStorage itemRequestStorage;
+    Collection<ItemRequestDto> getAllItemRequest(Long userId, Integer from, Integer size);
 
-    @Autowired
-    public ItemRequestService(ItemRequestStorage itemRequestStorage) {
-        this.itemRequestStorage = itemRequestStorage;
-    }
+    ItemRequestDto createItemRequest(ItemRequestDto itemRequestDto, Long userId);
 
-    public Collection<ItemRequestDto> getAllItemRequest() {
-        return  itemRequestStorage.getAllItemRequest();
-    }
+    ItemRequestDto getItemRequestById(Long itemRequestId, Long userId);
 
-    public ItemRequestDto createItemRequest(ItemRequestDto itemRequestDto) {
-        return itemRequestStorage.createItemRequest(itemRequestDto);
-    }
-
-    public ItemRequestDto updateItemRequest(ItemRequestDto itemRequestDto) {
-        return itemRequestStorage.updateItemRequest(itemRequestDto);
-    }
-
-    public ItemRequestDto getItemRequestById(Long itemRequestId) {
-        return itemRequestStorage.getItemRequestById(itemRequestId);
-    }
-
-    public void deleteItemRequestById(Long itemRequestId) {
-        itemRequestStorage.deleteItemRequestById(itemRequestId);
-    }
+    List<ItemRequestDto> getOwnItemRequests(Long userId, Integer from, Integer size);
 }

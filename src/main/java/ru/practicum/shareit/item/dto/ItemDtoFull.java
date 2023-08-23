@@ -21,6 +21,8 @@ public class ItemDtoFull {
 
     User owner;
 
+    Long requestId;
+
     ShortBookingDto lastBooking;
 
     ShortBookingDto nextBooking;
@@ -29,13 +31,14 @@ public class ItemDtoFull {
 
     @Builder
     public ItemDtoFull(Long id, String name, String description, Boolean available,
-                       User owner, ShortBookingDto lastBooking,
+                       User owner, Long requestId, ShortBookingDto lastBooking,
                        ShortBookingDto nextBooking, List<CommentDto> comments) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.available = available;
         this.owner = owner;
+        this.requestId = requestId;
         this.lastBooking = lastBooking;
         this.nextBooking = nextBooking;
         this.comments = comments;

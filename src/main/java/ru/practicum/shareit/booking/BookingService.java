@@ -9,17 +9,15 @@ import java.util.List;
 public interface BookingService {
 
 
-    List<BookingDto> getAllBookingsByUserId(String status,Long userId);
+    List<BookingDto> getAllBookingsByUserId(String status,Long userId, Integer from, Integer size);
 
     BookingDto createBooking(BookingInputDTO bookingInputDTO, Long userId);
 
     BookingDto updateBooking(Long bookingId, Long userId, Boolean approved);
 
-    void deleteBooking(Long bookingId);
-
     BookingDto getBookingByItemIdAndUserId(Long itemId, Long userId);
 
-    List<BookingDto> getBookingsByOwner(String status, Long userId);
+    List<BookingDto> getBookingsByOwner(String status, Long userId, Integer from, Integer size);
 
     BookingDto getBookingById(Long bookingId, Long userId);
 

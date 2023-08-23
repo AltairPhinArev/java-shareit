@@ -1,43 +1,51 @@
 package ru.practicum.shareit.request;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 import java.util.Collection;
+import java.util.List;
 
-/**
- * TODO Sprint add-item-requests.
- */
+
 @RestController
 @RequestMapping(path = "/requests")
 public class ItemRequestController {
 
     ItemRequestService itemRequestService;
 
-    @GetMapping
-    public Collection<ItemRequestDto> getAll() {
-        return itemRequestService.getAllItemRequest();
-    }
+    static final String USER_ID = "X-Sharer-User-Id";
 
-    @GetMapping("/{itemRequestId}")
-    public ItemRequestDto getItemRequestById(@PathVariable Long itemRequestId) {
-        return itemRequestService.getItemRequestById(itemRequestId);
+    @Autowired
+    public ItemRequestController(ItemRequestService itemRequestService) {
+        this.itemRequestService = itemRequestService;
     }
 
     @ResponseBody
     @PostMapping
-    public ItemRequestDto createItemRequest(@RequestBody ItemRequestDto itemRequestDto) {
-        return itemRequestService.createItemRequest(itemRequestDto);
+    public ItemRequestDto createItemRequest(@RequestHeader(USER_ID) Long userId,
+                                            @RequestBody ItemRequestDto itemRequestDto) {
+        return itemRequestService.createItemRequest(itemRequestDto, userId);
     }
 
-    @ResponseBody
-    @PatchMapping
-    public ItemRequestDto updateUser(@RequestBody ItemRequestDto itemRequestDto) {
-        return itemRequestService.updateItemRequest(itemRequestDto);
+    @GetMapping("/all")
+    public Collection<ItemRequestDto> getAll(@RequestHeader(USER_ID) Long userId,
+                                              @RequestParam(defaultValue = "0") Integer from,
+                                              @RequestParam(defaultValue = "10") Integer size) {
+        return itemRequestService.getAllItemRequest(userId, from, size);
     }
 
-    @DeleteMapping("/{itemRequestId}")
-    public void delete(@PathVariable Long itemRequestId) {
-        itemRequestService.deleteItemRequestById(itemRequestId);
+    @GetMapping("/{itemRequestId}")
+    public ItemRequestDto getItemRequestById(@PathVariable Long itemRequestId,
+                                             @RequestHeader(USER_ID) Long userId) {
+        return itemRequestService.getItemRequestById(itemRequestId, userId);
+    }
+
+
+    @GetMapping
+    public List<ItemRequestDto> getOwnItemRequests(@RequestHeader(USER_ID) Long userId,
+                                                   @RequestParam(defaultValue = "0") Integer from,
+                                                   @RequestParam(defaultValue = "10") Integer size) {
+        return itemRequestService.getOwnItemRequests(userId, from, size);
     }
 }

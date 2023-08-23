@@ -12,7 +12,7 @@ public interface ItemService {
 
     CommentDto createNewComment(InputCommentDto inputCommentDto, Long userId, Long itemId);
 
-    Collection<ItemDtoFull> getAllItems(Long userId);
+    Collection<ItemDtoFull> getAllItemsByUserId(Long userId, Integer from, Integer size);
 
     ItemDto createItem(ItemDto itemDto, Long userId);
 
@@ -24,7 +24,9 @@ public interface ItemService {
 
     ItemDto getItem(Long itemId);
 
-    List<ItemDto> getItemByDescription(String description);
+    List<ItemDto> getItemByRequestId(Long requestId);
+
+    List<ItemDto> getItemByDescription(String description, Integer from, Integer size);
 
     boolean checkItem(Long itemId);
 }
