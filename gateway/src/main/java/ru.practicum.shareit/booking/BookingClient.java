@@ -12,8 +12,6 @@ import ru.practicum.shareit.booking.dto.BookingInputDTO;
 import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.client.BaseClient;
 
-import java.util.Map;
-
 @Service
 public class BookingClient extends BaseClient {
 
