@@ -30,6 +30,6 @@ services:
     volumes:
          - /var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=sherit
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=iamroot
