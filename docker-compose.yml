@@ -20,7 +20,9 @@ services:
       - db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/sherit
-
+      - POSTGRES_DB=sherit
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=iamroot
   db:
     image: postgres:13.7-alpine
     container_name: db

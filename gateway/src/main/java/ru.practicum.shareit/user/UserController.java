@@ -22,6 +22,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<Object> getUsers() {
+        log.info("GET - request to get All users");
         return userClient.getUsers();
     }
 
@@ -40,7 +41,7 @@ public class UserController {
 
     @ResponseBody
     @PatchMapping("/{userId}")
-    public ResponseEntity<Object> update(@RequestBody @Valid UserDto userDto,
+    public ResponseEntity<Object> update(@RequestBody UserDto userDto,
                                          @PathVariable Long userId) {
         log.info("PATCH - request to update User = {} by ID = {}", userDto, userId);
         return userClient.update(userDto, userId);

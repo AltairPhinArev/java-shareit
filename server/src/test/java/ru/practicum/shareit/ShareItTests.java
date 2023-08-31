@@ -23,7 +23,7 @@ import ru.practicum.shareit.item.comment.dto.InputCommentDto;
 
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoFull;
-import ru.practicum.shareit.request.ItemRequestImpl;
+import ru.practicum.shareit.request.ItemRequestServiceImpl;
 import ru.practicum.shareit.request.ItemRequestMapper;
 import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.request.ItemRequestService;
@@ -96,7 +96,7 @@ class ShareItTests {
         itemService = new ItemServiceImpl(itemRepository, userService,
                 commentRepository, bookingRepository, bookingService, itemRequestService);
         bookingService = new BookingServiceImpl(itemService, userService, bookingMapper, bookingRepository);
-        itemRequestService = new ItemRequestImpl(userService, itemService, itemRequestRepository);
+        itemRequestService = new ItemRequestServiceImpl(userService, itemService, itemRequestRepository);
         itemService = new ItemServiceImpl(itemRepository, userService,
                 commentRepository, bookingRepository, bookingService, itemRequestService);
     }

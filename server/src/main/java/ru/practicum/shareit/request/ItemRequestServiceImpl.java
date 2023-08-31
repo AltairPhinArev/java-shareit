@@ -23,7 +23,7 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 @Slf4j
-public class ItemRequestImpl implements ItemRequestService {
+public class ItemRequestServiceImpl implements ItemRequestService {
 
     ItemRequestRepository itemRequestRepository;
 
@@ -33,8 +33,8 @@ public class ItemRequestImpl implements ItemRequestService {
 
     @Lazy
     @Autowired
-    public ItemRequestImpl(UserService userService, ItemService itemService,
-                           ItemRequestRepository itemRequestRepository) {
+    public ItemRequestServiceImpl(UserService userService, ItemService itemService,
+                                  ItemRequestRepository itemRequestRepository) {
         this.userService = userService;
         this.itemService = itemService;
         this.itemRequestRepository = itemRequestRepository;
