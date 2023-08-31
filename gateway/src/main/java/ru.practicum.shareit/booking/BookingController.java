@@ -32,6 +32,7 @@ public class BookingController {
                                               @RequestParam(required = false) Integer size) {
         BookingState state = BookingState.from(stateParam)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
+        log.info("GET - request from User with ID = {} and STATE = {}", userId, state);
         return bookingClient.getBookings(userId, state, from, size);
     }
 
@@ -42,19 +43,21 @@ public class BookingController {
                                                    @RequestParam(required = false) Integer size) {
         BookingState state = BookingState.from(stateParam)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
+        log.info("GET - request from Owner with ID = {} and STATE = {}", userId, state);
         return bookingClient.getBookingsOwner(userId, state, from, size);
     }
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestHeader(USER_ID) Long userId,
-                                         @RequestBody @Valid BookingInputDTO requestDto) {
-        log.info("Creating booking {}, userId={}", requestDto, userId);
-        return bookingClient.create(userId, requestDto);
+                                         @RequestBody @Valid BookingInputDTO bookingInputDTO) {
+        log.info("POST - request booking from booking = {}, userId = {}", bookingInputDTO, userId);
+        return bookingClient.create(userId, bookingInputDTO);
     }
 
     @GetMapping("/{bookingId}")
     public ResponseEntity<Object> getBooking(@RequestHeader(USER_ID) Long userId,
                                              @PathVariable Long bookingId) {
+        log.info("GET - request from User with ID = {} and BookingId = {}", userId, bookingId);
         return bookingClient.getBooking(userId, bookingId);
     }
 
@@ -62,6 +65,7 @@ public class BookingController {
     @PatchMapping("/{bookingId}")
     public ResponseEntity<Object> update(@PathVariable Long bookingId,
                                          @RequestHeader(USER_ID) Long userId, @RequestParam Boolean approved) {
+        log.info("PATCH - request from User with ID = {}, BookingId = {}, Approved = {}", userId, bookingId, approved);
         return bookingClient.update(bookingId, userId, approved);
     }
 }
